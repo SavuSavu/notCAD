@@ -1,0 +1,13 @@
+{
+  "units": "mm",
+  "fixtures": [
+    { "id": "box", "width": 60, "height": 40, "depth": 6, "expectedVolume": 14400, "expectedArea": 6000, "expectedFaces": 6, "executable": "tests/kernel.test.ts" },
+    { "id": "mechanical-bracket", "base": [60, 40, 6], "upright": [60, 6, 34], "hole": { "radius": 4, "depth": 6, "center": [30, 25] }, "expectedVolumeFormula": "60*40*6 + 60*6*34 - pi*4^2*6", "executable": "tests/kernel.test.ts; tests/e2e/workspace.spec.ts" },
+    { "id": "turned-component", "innerRadius": 10, "outerRadius": 15, "length": 20, "expectedVolumeFormula": "pi*(15^2-10^2)*20", "executable": "tests/kernel.test.ts", "interfaceAcceptance": "pending" },
+    { "id": "lofted-enclosure", "profileSizes": [[80, 60], [75, 55], [60, 40]], "profileHeights": [0, 30, 60], "wallThickness": 2, "implementation": "pending" },
+    { "id": "sheet-metal-enclosure", "width": 100, "height": 80, "flangeHeight": 40, "thickness": 1.5, "bendRadius": 2, "implementation": "pending" },
+    { "id": "structural-frame", "width": 1000, "height": 600, "profile": [40, 40, 3], "implementation": "pending" },
+    { "id": "articulated-assembly", "armLength": 100, "hingeLimitsDegrees": [0, 90], "relationshipRatio": 2, "implementation": "pending" },
+    { "id": "dimensioned-drawing", "source": "mechanical-bracket", "sheet": "A4", "views": ["front", "top", "right", "section", "detail"], "implementation": "pending" }
+  ]
+}

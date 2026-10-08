@@ -1,0 +1,66 @@
+{
+  "checkpointDate": "2026-10-09",
+  "recordedAt": "2026-10-08T23:16:20.329Z",
+  "scope": "Foundation and limited main workflow only; not full parity acceptance",
+  "artifactSha256": "dcd51d726cbbb31ba8df2bf37cef3b6097fc6d801d02240013d7e50f0b7b75d9",
+  "build": {
+    "command": "npm run build",
+    "passed": true,
+    "basePath": "/notCAD/",
+    "notes": [
+      "Single-threaded local WASM assets bundled",
+      "Vite reports externalized Node-only branches in Emscripten wrappers; all tested browsers load the workers successfully",
+      "Three.js main bundle is larger than Vite default chunk warning threshold"
+    ]
+  },
+  "unitAndKernel": {
+    "command": "npm test",
+    "passed": true,
+    "files": 8,
+    "tests": 46
+  },
+  "browsers": {
+    "command": "DISPLAY=:99 NOTCAD_HEADED=1 LIBGL_ALWAYS_SOFTWARE=1 npm run test:e2e -- --workers=2",
+    "passed": true,
+    "tests": 52,
+    "projects": {
+      "chromium": 13,
+      "firefox": 13,
+      "webkit": 13,
+      "touch": 13
+    },
+    "host": "Linux Mint 22.3, Node.js 22.23.1, Xvfb with software rendering",
+    "touch": "Chromium emulating iPhone 13; no physical-device evidence",
+    "flaky": 0,
+    "skipped": 0,
+    "durationMs": 287097.44
+  },
+  "dependencyAudit": {
+    "command": "npm audit",
+    "knownVulnerabilities": 0
+  },
+  "parity": {
+    "rows": 134,
+    "complete": 0,
+    "partial": 19,
+    "documentationAuditComplete": false
+  },
+  "release": {
+    "deployed": false,
+    "expectedGateExitCode": 1,
+    "physicalIOS": false,
+    "physicalAndroid": false,
+    "independentSTEPReader": false,
+    "IGESBindings": false
+  },
+  "additionalValidation": {
+    "findings": "docs/VALIDATION.md",
+    "priorCompleteBrowserRuns": [40, 48],
+    "finalCompleteBrowserRun": 52,
+    "invalidatedHostRun": "Xvfb stopped after 28 cases; complete suite rerun with session-owned display and -noreset",
+    "formattingPassed": true,
+    "whitespacePassed": true,
+    "staticAssetSmokePassed": true,
+    "desktopAndEmulatedPhoneVisualReviewPassed": true
+  }
+}

@@ -1,0 +1,75 @@
+name: Verify and publish preview
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+concurrency:
+  group: notcad-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: notcad-local-build
+          path: dist
+          retention-days: 30
+  browser-tests:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit, touch]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: notcad-local-build
+          path: dist
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - run: xvfb-run npm run test:e2e -- --project=${{ matrix.browser }}
+        env:
+          NOTCAD_HEADED: "1"
+          LIBGL_ALWAYS_SOFTWARE: "1"
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-failure-${{ matrix.browser }}
+          path: test-results
+  deploy-preview:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: [build, browser-tests]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: notcad-local-build
+          path: dist
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+      - uses: actions/deploy-pages@v4
+        id: deployment
+# Public preview explicitly authorized by the user. Full parity release gates remain unfinished.

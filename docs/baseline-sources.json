@@ -1,0 +1,130 @@
+{
+  "targetDate": "2026-10-09",
+  "auditStatus": "pending",
+  "sources": [
+    {
+      "url": "https://cad.onshape.com/help/Content/Assembly/assembly.htm",
+      "sha256": "c20d72641dd744a07ab37dc0163ec0ffc40d133d06f9db7f1b906ee77d5f6854",
+      "retrievedAt": "2026-10-08T22:37:42.362143+00:00",
+      "lastModified": "Thu, 24 Sep 2026 13:19:29 GMT",
+      "linkedDocumentation": [
+        "https://cad.onshape.com/help/Content/Assembly/assembly_mate_connector.htm",
+        "https://cad.onshape.com/help/Content/Assembly/group.htm",
+        "https://cad.onshape.com/help/Content/Assembly/insert_parts_and_assemblies.htm",
+        "https://cad.onshape.com/help/Content/Assembly/instances_list.htm",
+        "https://cad.onshape.com/help/Content/Assembly/mates.htm",
+        "https://cad.onshape.com/help/Content/Assembly/named_positions.htm",
+        "https://cad.onshape.com/help/Content/Assembly/relations.htm",
+        "https://cad.onshape.com/help/Content/Assembly/snap_mode.htm",
+        "https://cad.onshape.com/help/Content/Collaboration/comments_on_workspaces.htm",
+        "https://cad.onshape.com/help/Content/Collaboration/follow_mode.htm",
+        "https://cad.onshape.com/help/Content/Collaboration/share_documents.htm",
+        "https://cad.onshape.com/help/Content/Document/linking_documents.htm",
+        "https://cad.onshape.com/help/Content/Document/merging.htm",
+        "https://cad.onshape.com/help/Content/File/exporting_files.htm",
+        "https://cad.onshape.com/help/Content/Home/home.htm",
+        "https://cad.onshape.com/help/Content/Home/properties_metadata.htm",
+        "https://cad.onshape.com/help/Content/Home/triad_manipulator.htm",
+        "https://cad.onshape.com/help/Content/Plans/managing_your_onshape_account_and_subscription.htm",
+        "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+        "https://cad.onshape.com/help/Content/View/mass_properties_tool.htm",
+        "https://cad.onshape.com/help/Content/View/measure_tool.htm"
+      ]
+    },
+    {
+      "url": "https://cad.onshape.com/help/Content/Assembly/mates.htm",
+      "sha256": "2ea76a5c1c803c23573263b12ea753aca000bc4cb0544cf65fb6a57f8849b786",
+      "retrievedAt": "2026-10-08T22:37:42.377007+00:00",
+      "lastModified": "Thu, 24 Sep 2026 13:19:19 GMT",
+      "linkedDocumentation": [
+        "https://cad.onshape.com/help/Content/Assembly/assembly_mate_connector.htm",
+        "https://cad.onshape.com/help/Content/Home/home.htm",
+        "https://cad.onshape.com/help/Content/Home/numeric_fields.htm",
+        "https://cad.onshape.com/help/Content/View/isolate.htm"
+      ]
+    },
+    {
+      "url": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "sha256": "784c1193d2466dcad4a1ae8333b3ef1929885c71afb5c006c7d9118eadc0ed06",
+      "retrievedAt": "2026-10-08T22:37:42.340767+00:00",
+      "lastModified": "Thu, 24 Sep 2026 13:19:20 GMT",
+      "linkedDocumentation": [
+        "https://cad.onshape.com/help/Content/Assembly/assembly.htm",
+        "https://cad.onshape.com/help/Content/Home/home.htm",
+        "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+        "https://cad.onshape.com/help/Content/Plans/my_account_preferences.htm#ShortcutToolbars",
+        "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+        "https://cad.onshape.com/help/Content/View/mass_properties_tool.htm",
+        "https://cad.onshape.com/help/Content/View/measure_tool.htm"
+      ]
+    },
+    {
+      "url": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "sha256": "0a12c37a48bfb898e28a41a888f28aa499e753dbad08a0aed6b4bc143e908f25",
+      "retrievedAt": "2026-10-08T22:37:42.377256+00:00",
+      "lastModified": "Thu, 24 Sep 2026 13:19:26 GMT",
+      "linkedDocumentation": [
+        "https://cad.onshape.com/help/Content/Assembly/bill_of_material.htm",
+        "https://cad.onshape.com/help/Content/Assembly/modeling_in_context.htm",
+        "https://cad.onshape.com/help/Content/Collaboration/collaboration.htm",
+        "https://cad.onshape.com/help/Content/Collaboration/comments_on_workspaces.htm",
+        "https://cad.onshape.com/help/Content/Collaboration/follow_mode.htm",
+        "https://cad.onshape.com/help/Content/Document/document_panel.htm",
+        "https://cad.onshape.com/help/Content/Document/document_tabs.htm#Searchin",
+        "https://cad.onshape.com/help/Content/Document/linking_documents.htm",
+        "https://cad.onshape.com/help/Content/Document/versions_and_history.htm",
+        "https://cad.onshape.com/help/Content/File/exporting_files.htm",
+        "https://cad.onshape.com/help/Content/Home/home.htm",
+        "https://cad.onshape.com/help/Content/Home/properties_metadata.htm",
+        "https://cad.onshape.com/help/Content/PartStudio/customizing_part_materials.htm#assignin",
+        "https://cad.onshape.com/help/Content/PartStudio/derived.htm",
+        "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+        "https://cad.onshape.com/help/Content/PartStudio/features_and_parts_lists.htm",
+        "https://cad.onshape.com/help/Content/PartStudio/features_and_parts_lists.htm#Drag",
+        "https://cad.onshape.com/help/Content/Plans/enterprise_settings_categories.htm",
+        "https://cad.onshape.com/help/Content/Plans/managing_projects.htm",
+        "https://cad.onshape.com/help/Content/Release/setting_up_release_management.htm",
+        "https://cad.onshape.com/help/Content/Release/setting_up_release_management.htm#Setting",
+        "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+        "https://cad.onshape.com/help/Content/View/camera_and_render_options.htm",
+        "https://cad.onshape.com/help/Content/View/mass_properties_tool.htm",
+        "https://cad.onshape.com/help/Content/View/measure_tool.htm"
+      ]
+    },
+    {
+      "url": "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+      "sha256": "1d155ae756230dd14d1fb8dff5bdea7d7ceac3dafbb287ec0dfaacb6d8007e1f",
+      "retrievedAt": "2026-10-08T22:37:42.601964+00:00",
+      "lastModified": "Thu, 24 Sep 2026 13:19:18 GMT",
+      "linkedDocumentation": [
+        "https://cad.onshape.com/help/Content/Assembly/assembly.htm",
+        "https://cad.onshape.com/help/Content/Home/context_menus.htm",
+        "https://cad.onshape.com/help/Content/Home/home.htm",
+        "https://cad.onshape.com/help/Content/Home/numeric_fields.htm",
+        "https://cad.onshape.com/help/Content/PartStudio/3d_fit_spline.htm",
+        "https://cad.onshape.com/help/Content/PartStudio/bridging_curve.htm",
+        "https://cad.onshape.com/help/Content/PartStudio/composite_curve.htm",
+        "https://cad.onshape.com/help/Content/PartStudio/edit_curve.htm",
+        "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+        "https://cad.onshape.com/help/Content/PartStudio/helix.htm",
+        "https://cad.onshape.com/help/Content/PartStudio/intersection_curve.htm",
+        "https://cad.onshape.com/help/Content/PartStudio/isocline.htm",
+        "https://cad.onshape.com/help/Content/PartStudio/isoparametric_curve.htm",
+        "https://cad.onshape.com/help/Content/PartStudio/offset_curve.htm",
+        "https://cad.onshape.com/help/Content/PartStudio/projected_curve.htm",
+        "https://cad.onshape.com/help/Content/PartStudio/routing_curve.htm",
+        "https://cad.onshape.com/help/Content/PartStudio/trim_curve.htm",
+        "https://cad.onshape.com/help/Content/Plans/managing_your_onshape_account_and_subscription.htm",
+        "https://cad.onshape.com/help/Content/View/mass_properties_tool.htm",
+        "https://cad.onshape.com/help/Content/View/measure_tool.htm"
+      ]
+    },
+    {
+      "url": "https://cad.onshape.com/help/Content/drawings.htm",
+      "sha256": "0f60bb9562aa799965044aad8053f72ba340ddf1f59a6dfa1e714d418557288c",
+      "retrievedAt": "2026-10-08T22:37:42.811408+00:00",
+      "lastModified": "Thu, 24 Sep 2026 13:19:24 GMT",
+      "linkedDocumentation": []
+    }
+  ]
+}

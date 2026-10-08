@@ -1,0 +1,3193 @@
+{
+  "baselineDate": "2026-10-09",
+  "baselineFrozen": false,
+  "documentationAuditComplete": false,
+  "baselineNote": "User capability contract fixed; tool-mode inventory requires audit of linked official documentation and Free eligibility. Mode lists are targets, not claims of exhaustive documented options. No row is complete.",
+  "exceptions": [
+    "Cloud accounts and collaboration",
+    "Proprietary vendor file formats",
+    "Execution of existing FeatureScript custom features"
+  ],
+  "rows": [
+    {
+      "id": "lines",
+      "area": "Sketching",
+      "tool": "Lines",
+      "source": "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["segment", "chained", "construction"],
+      "example": "Draw a 40 \u00d7 25 closed profile using four lines",
+      "acceptance": {
+        "testId": "parity:lines",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Draw a 40 \u00d7 25 closed profile using four lines",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "rectangles",
+      "area": "Sketching",
+      "tool": "Rectangles",
+      "source": "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["corner", "center", "three-point"],
+      "example": "Constrain a 60 \u00d7 40 rectangle, then change width to 80",
+      "acceptance": {
+        "testId": "parity:rectangles",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Constrain a 60 \u00d7 40 rectangle, then change width to 80",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "partial",
+      "implementedScope": "Only axis-aligned corner rectangle with numeric dimensions",
+      "passingEvidence": []
+    },
+    {
+      "id": "circles",
+      "area": "Sketching",
+      "tool": "Circles",
+      "source": "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["center-radius", "three-point"],
+      "example": "Constrain a radius-4 circle and extrude a cylinder",
+      "acceptance": {
+        "testId": "parity:circles",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Constrain a radius-4 circle and extrude a cylinder",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "partial",
+      "implementedScope": "Only center-radius circle",
+      "passingEvidence": []
+    },
+    {
+      "id": "arcs",
+      "area": "Sketching",
+      "tool": "Arcs",
+      "source": "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["three-point", "tangent", "center-point"],
+      "example": "Close a profile using each arc mode",
+      "acceptance": {
+        "testId": "parity:arcs",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Close a profile using each arc mode",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "ellipses",
+      "area": "Sketching",
+      "tool": "Ellipses",
+      "source": "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["full ellipse", "elliptical arc"],
+      "example": "Constrain a 30 \u00d7 15 ellipse and edit major radius",
+      "acceptance": {
+        "testId": "parity:ellipses",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Constrain a 30 \u00d7 15 ellipse and edit major radius",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "polygons",
+      "area": "Sketching",
+      "tool": "Polygons",
+      "source": "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["inscribed", "circumscribed"],
+      "example": "Dimension a hexagon to 10 mm across flats",
+      "acceptance": {
+        "testId": "parity:polygons",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Dimension a hexagon to 10 mm across flats",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "splines",
+      "area": "Sketching",
+      "tool": "Splines",
+      "source": "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["interpolation", "control-point", "spline editing"],
+      "example": "Edit a constrained spline without losing its endpoints",
+      "acceptance": {
+        "testId": "parity:splines",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Edit a constrained spline without losing its endpoints",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "construction-geometry",
+      "area": "Sketching",
+      "tool": "Construction geometry",
+      "source": "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["toggle entities", "construction profiles"],
+      "example": "Extrude a profile while excluding construction entities",
+      "acceptance": {
+        "testId": "parity:construction-geometry",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Extrude a profile while excluding construction entities",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "projection",
+      "area": "Sketching",
+      "tool": "Projection",
+      "source": "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["use/project edges", "silhouette", "intersection"],
+      "example": "Project a changed upstream edge into a second sketch",
+      "acceptance": {
+        "testId": "parity:projection",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Project a changed upstream edge into a second sketch",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "trim",
+      "area": "Sketching",
+      "tool": "Trim",
+      "source": "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["segment removal", "boundaries"],
+      "example": "Trim crossed lines into a closed contour",
+      "acceptance": {
+        "testId": "parity:trim",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Trim crossed lines into a closed contour",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "extend",
+      "area": "Sketching",
+      "tool": "Extend",
+      "source": "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["nearest boundary"],
+      "example": "Extend a line to an intersecting arc",
+      "acceptance": {
+        "testId": "parity:extend",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Extend a line to an intersecting arc",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "offset",
+      "area": "Sketching",
+      "tool": "Offset",
+      "source": "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["chain", "distance", "reverse"],
+      "example": "Offset a mixed line/arc profile by 2 mm",
+      "acceptance": {
+        "testId": "parity:offset",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Offset a mixed line/arc profile by 2 mm",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "sketch-fillet",
+      "area": "Sketching",
+      "tool": "Sketch fillet",
+      "source": "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["radius", "trim options"],
+      "example": "Round a constrained right-angle corner at radius 3",
+      "acceptance": {
+        "testId": "parity:sketch-fillet",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Round a constrained right-angle corner at radius 3",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "sketch-chamfer",
+      "area": "Sketching",
+      "tool": "Sketch chamfer",
+      "source": "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["distance", "angle"],
+      "example": "Chamfer a constrained profile and change distance",
+      "acceptance": {
+        "testId": "parity:sketch-chamfer",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Chamfer a constrained profile and change distance",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "sketch-patterns",
+      "area": "Sketching",
+      "tool": "Sketch patterns",
+      "source": "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["linear", "circular", "instance count"],
+      "example": "Pattern a hole at 10 mm spacing and change instance count",
+      "acceptance": {
+        "testId": "parity:sketch-patterns",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Pattern a hole at 10 mm spacing and change instance count",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "sketch-mirror",
+      "area": "Sketching",
+      "tool": "Sketch mirror",
+      "source": "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["mirror line", "multiple entities"],
+      "example": "Mirror half a symmetric constrained profile",
+      "acceptance": {
+        "testId": "parity:sketch-mirror",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Mirror half a symmetric constrained profile",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "dimensions",
+      "area": "Sketching",
+      "tool": "Dimensions",
+      "source": "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "length",
+        "distance",
+        "angle",
+        "diameter",
+        "radius",
+        "driven"
+      ],
+      "example": "Resize the bracket using driving dimensions",
+      "acceptance": {
+        "testId": "parity:dimensions",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Resize the bracket using driving dimensions",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "expressions",
+      "area": "Sketching",
+      "tool": "Expressions",
+      "source": "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["units", "arithmetic", "variables", "trigonometry"],
+      "example": "Drive a 1 inch length and a variable-based diameter",
+      "acceptance": {
+        "testId": "parity:expressions",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Drive a 1 inch length and a variable-based diameter",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "geometric-constraints",
+      "area": "Sketching",
+      "tool": "Geometric constraints",
+      "source": "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "coincident",
+        "parallel",
+        "perpendicular",
+        "tangent",
+        "equal",
+        "horizontal",
+        "vertical",
+        "midpoint",
+        "normal",
+        "pierce",
+        "symmetric",
+        "concentric",
+        "curvature",
+        "fix"
+      ],
+      "example": "Solve a mixed line/arc sketch and change one driving dimension",
+      "acceptance": {
+        "testId": "parity:geometric-constraints",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Solve a mixed line/arc sketch and change one driving dimension",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "partial",
+      "implementedScope": "PlaneGCS fixes profile origins and constrains rectangle orientation, dimensions and circle diameter; no general constraint UI",
+      "passingEvidence": []
+    },
+    {
+      "id": "constraint-diagnostics",
+      "area": "Sketching",
+      "tool": "Constraint diagnostics",
+      "source": "https://cad.onshape.com/help/Content/Sketch/sketch_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "satisfied",
+        "underconstrained",
+        "redundant",
+        "inconsistent",
+        "degenerate"
+      ],
+      "example": "Remove and duplicate constraints; identify conflict IDs",
+      "acceptance": {
+        "testId": "parity:constraint-diagnostics",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Remove and duplicate constraints; identify conflict IDs",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "partial",
+      "implementedScope": "Solver adapter reports DOF/conflicts/redundancy; arbitrary constraint editing absent",
+      "passingEvidence": []
+    },
+    {
+      "id": "multiple-parts",
+      "area": "Parametric parts",
+      "tool": "Multiple parts",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["independent solids", "shared sketches"],
+      "example": "Create two parts and selectively modify one",
+      "acceptance": {
+        "testId": "parity:multiple-parts",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Create two parts and selectively modify one",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "partial",
+      "implementedScope": "New-part extrusions/revolutions with stable part IDs",
+      "passingEvidence": []
+    },
+    {
+      "id": "extrude",
+      "area": "Parametric parts",
+      "tool": "Extrude",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "solid",
+        "surface",
+        "thin",
+        "new",
+        "add",
+        "remove",
+        "intersect",
+        "blind",
+        "symmetric",
+        "up-to",
+        "through-all",
+        "direction",
+        "draft"
+      ],
+      "example": "Create the base and upright of the mechanical bracket",
+      "acceptance": {
+        "testId": "parity:extrude",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Create the base and upright of the mechanical bracket",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "partial",
+      "implementedScope": "Positive blind solid; new/add/remove/intersect; no other terminations or surfaces",
+      "passingEvidence": []
+    },
+    {
+      "id": "revolve",
+      "area": "Parametric parts",
+      "tool": "Revolve",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "solid",
+        "surface",
+        "thin",
+        "full",
+        "angle",
+        "symmetric",
+        "new",
+        "add",
+        "remove",
+        "intersect"
+      ],
+      "example": "Build a 10/15 mm radius, 20 mm long turned tube",
+      "acceptance": {
+        "testId": "parity:revolve",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Build a 10/15 mm radius, 20 mm long turned tube",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "partial",
+      "implementedScope": "Angle/full solid about local V axis; new/add/remove/intersect",
+      "passingEvidence": []
+    },
+    {
+      "id": "sweep",
+      "area": "Parametric parts",
+      "tool": "Sweep",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["solid", "surface", "profile", "path", "orientation"],
+      "example": "Sweep a rectangular profile along a 3D path",
+      "acceptance": {
+        "testId": "parity:sweep",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Sweep a rectangular profile along a 3D path",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "loft",
+      "area": "Parametric parts",
+      "tool": "Loft",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "solid",
+        "surface",
+        "profiles",
+        "guides",
+        "end conditions"
+      ],
+      "example": "Loft the enclosure through three unequal profiles",
+      "acceptance": {
+        "testId": "parity:loft",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Loft the enclosure through three unequal profiles",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "holes",
+      "area": "Parametric parts",
+      "tool": "Holes",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "simple",
+        "counterbore",
+        "countersink",
+        "depth",
+        "termination",
+        "tap"
+      ],
+      "example": "Create a dimensioned hole with a countersink",
+      "acceptance": {
+        "testId": "parity:holes",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Create a dimensioned hole with a countersink",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "threads",
+      "area": "Parametric parts",
+      "tool": "Threads",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["external", "internal", "cosmetic/annotation", "pitch"],
+      "example": "Thread the turned component and check drawing callout",
+      "acceptance": {
+        "testId": "parity:threads",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Thread the turned component and check drawing callout",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "fillets",
+      "area": "Parametric parts",
+      "tool": "Fillets",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "edge",
+        "face",
+        "full-round",
+        "constant",
+        "variable",
+        "tangent propagation"
+      ],
+      "example": "Round selected bracket edges; edit radius",
+      "acceptance": {
+        "testId": "parity:fillets",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Round selected bracket edges; edit radius",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "partial",
+      "implementedScope": "Constant radius on all edges only",
+      "passingEvidence": []
+    },
+    {
+      "id": "chamfers",
+      "area": "Parametric parts",
+      "tool": "Chamfers",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "equal distance",
+        "two distances",
+        "distance-angle",
+        "tangent propagation"
+      ],
+      "example": "Chamfer one rim of the turned component",
+      "acceptance": {
+        "testId": "parity:chamfers",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Chamfer one rim of the turned component",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "partial",
+      "implementedScope": "Equal distance on all edges only",
+      "passingEvidence": []
+    },
+    {
+      "id": "shell",
+      "area": "Parametric parts",
+      "tool": "Shell",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["remove faces", "thickness", "direction"],
+      "example": "Hollow the lofted enclosure and change wall thickness",
+      "acceptance": {
+        "testId": "parity:shell",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Hollow the lofted enclosure and change wall thickness",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "draft",
+      "area": "Parametric parts",
+      "tool": "Draft",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["neutral plane", "parting line", "direction", "angle"],
+      "example": "Draft an enclosure wall by 3 degrees",
+      "acceptance": {
+        "testId": "parity:draft",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Draft an enclosure wall by 3 degrees",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "ribs",
+      "area": "Parametric parts",
+      "tool": "Ribs",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["profile", "thickness", "direction"],
+      "example": "Add an upright support rib to the bracket",
+      "acceptance": {
+        "testId": "parity:ribs",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Add an upright support rib to the bracket",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "booleans",
+      "area": "Parametric parts",
+      "tool": "Booleans",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["union", "subtract", "intersect", "keep tools"],
+      "example": "Combine two overlapping analytic boxes",
+      "acceptance": {
+        "testId": "parity:booleans",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Combine two overlapping analytic boxes",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "partial",
+      "implementedScope": "New/add/remove/intersect while extruding/revolving; no standalone tools/keep-tools",
+      "passingEvidence": []
+    },
+    {
+      "id": "split",
+      "area": "Parametric parts",
+      "tool": "Split",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["part", "face", "tool plane/surface"],
+      "example": "Split a cylinder at its midplane",
+      "acceptance": {
+        "testId": "parity:split",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Split a cylinder at its midplane",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "transforms",
+      "area": "Parametric parts",
+      "tool": "Transforms",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "translation",
+        "rotation",
+        "scale",
+        "copy",
+        "mate connectors"
+      ],
+      "example": "Move, copy and rotate the second part precisely",
+      "acceptance": {
+        "testId": "parity:transforms",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Move, copy and rotate the second part precisely",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "mirrors",
+      "area": "Parametric parts",
+      "tool": "Mirrors",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["part", "feature", "face", "plane"],
+      "example": "Mirror a bracket hole across its center plane",
+      "acceptance": {
+        "testId": "parity:mirrors",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Mirror a bracket hole across its center plane",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "patterns",
+      "area": "Parametric parts",
+      "tool": "Patterns",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "linear",
+        "circular",
+        "curve",
+        "part",
+        "feature",
+        "face",
+        "skip instances"
+      ],
+      "example": "Pattern mounting holes and skip one instance",
+      "acceptance": {
+        "testId": "parity:patterns",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Pattern mounting holes and skip one instance",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "reference-planes",
+      "area": "Parametric parts",
+      "tool": "Reference planes",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "offset",
+        "angle",
+        "midplane",
+        "points",
+        "line-point",
+        "tangent"
+      ],
+      "example": "Create an offset plane and rebuild its sketch",
+      "acceptance": {
+        "testId": "parity:reference-planes",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Create an offset plane and rebuild its sketch",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "reference-axes",
+      "area": "Parametric parts",
+      "tool": "Reference axes",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["points", "planes", "cylindrical geometry"],
+      "example": "Create an axis for the turned component",
+      "acceptance": {
+        "testId": "parity:reference-axes",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Create an axis for the turned component",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "reference-points",
+      "area": "Parametric parts",
+      "tool": "Reference points",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["coordinates", "vertex", "curve intersection"],
+      "example": "Use a reference point as a loft endpoint",
+      "acceptance": {
+        "testId": "parity:reference-points",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Use a reference point as a loft endpoint",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "mate-connectors-in-parts",
+      "area": "Parametric parts",
+      "tool": "Mate connectors in parts",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["implicit", "explicit", "origin", "orientation"],
+      "example": "Define a reusable part attachment coordinate system",
+      "acceptance": {
+        "testId": "parity:mate-connectors-in-parts",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Define a reusable part attachment coordinate system",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "variables",
+      "area": "Parametric parts",
+      "tool": "Variables",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["length", "angle", "number", "measured", "expressions"],
+      "example": "Drive several bracket features with one thickness variable",
+      "acceptance": {
+        "testId": "parity:variables",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Drive several bracket features with one thickness variable",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "configurations",
+      "area": "Parametric parts",
+      "tool": "Configurations",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["list", "checkbox", "numeric", "configured properties"],
+      "example": "Switch between two bracket sizes and validate both",
+      "acceptance": {
+        "testId": "parity:configurations",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Switch between two bracket sizes and validate both",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "editable-history",
+      "area": "Parametric parts",
+      "tool": "Editable history",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "edit",
+        "suppress",
+        "rollback",
+        "reorder",
+        "undo",
+        "redo",
+        "preview"
+      ],
+      "example": "Edit an early dimension and rebuild the bracket",
+      "acceptance": {
+        "testId": "parity:editable-history",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Edit an early dimension and rebuild the bracket",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "partial",
+      "implementedScope": "Edit/suppress/rollback/reorder/delete/undo/redo; full rebuild, no incremental rebuild or preview",
+      "passingEvidence": []
+    },
+    {
+      "id": "reference-repair",
+      "area": "Parametric parts",
+      "tool": "Reference repair",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "provenance",
+        "geometric signature",
+        "ambiguity",
+        "manual repair"
+      ],
+      "example": "Change topology; require repair for an ambiguous face",
+      "acceptance": {
+        "testId": "parity:reference-repair",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Change topology; require repair for an ambiguous face",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "derived-parts",
+      "area": "Parametric parts",
+      "tool": "Derived parts",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["local source", "linked dimensions", "placement"],
+      "example": "Derive a configured part from another local Part Studio",
+      "acceptance": {
+        "testId": "parity:derived-parts",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Derive a configured part from another local Part Studio",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "delete-part",
+      "area": "Parametric parts",
+      "tool": "Delete part",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["part selection"],
+      "example": "Delete one of two solids without altering the other",
+      "acceptance": {
+        "testId": "parity:delete-part",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Delete one of two solids without altering the other",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "move-face",
+      "area": "Parametric parts",
+      "tool": "Move face",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["offset", "translate", "rotate"],
+      "example": "Offset one planar box face by 2 mm",
+      "acceptance": {
+        "testId": "parity:move-face",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Offset one planar box face by 2 mm",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "replace-face",
+      "area": "Parametric parts",
+      "tool": "Replace face",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["replacement surface", "offset"],
+      "example": "Replace a planar termination with a curved surface",
+      "acceptance": {
+        "testId": "parity:replace-face",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Replace a planar termination with a curved surface",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "delete-face",
+      "area": "Parametric parts",
+      "tool": "Delete face",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["heal", "cap", "open"],
+      "example": "Remove a fillet face and heal the solid",
+      "acceptance": {
+        "testId": "parity:delete-face",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Remove a fillet face and heal the solid",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "surface-creation",
+      "area": "Surfaces and curves",
+      "tool": "Surface creation",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["extrude", "revolve", "sweep", "loft"],
+      "example": "Build open analytic surfaces using each feature",
+      "acceptance": {
+        "testId": "parity:surface-creation",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Build open analytic surfaces using each feature",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "boundary-surface",
+      "area": "Surfaces and curves",
+      "tool": "Boundary surface",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["direction profiles", "continuity"],
+      "example": "Create a four-sided enclosure boundary patch",
+      "acceptance": {
+        "testId": "parity:boundary-surface",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Create a four-sided enclosure boundary patch",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "fill",
+      "area": "Surfaces and curves",
+      "tool": "Fill",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["edge boundary", "guides", "continuity"],
+      "example": "Fill an opening bounded by noncoplanar edges",
+      "acceptance": {
+        "testId": "parity:fill",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Fill an opening bounded by noncoplanar edges",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "surface-trim",
+      "area": "Surfaces and curves",
+      "tool": "Surface trim",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["intersection", "keep region"],
+      "example": "Trim a sheet with a cylindrical tool",
+      "acceptance": {
+        "testId": "parity:surface-trim",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Trim a sheet with a cylindrical tool",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "surface-extension",
+      "area": "Surfaces and curves",
+      "tool": "Surface extension",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["distance", "termination", "continuity"],
+      "example": "Extend a curved surface to its neighboring sheet",
+      "acceptance": {
+        "testId": "parity:surface-extension",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Extend a curved surface to its neighboring sheet",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "surface-offset",
+      "area": "Surfaces and curves",
+      "tool": "Surface offset",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["distance", "direction"],
+      "example": "Offset a cylinder surface by 2 mm",
+      "acceptance": {
+        "testId": "parity:surface-offset",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Offset a cylinder surface by 2 mm",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "thicken",
+      "area": "Surfaces and curves",
+      "tool": "Thicken",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["one-sided", "symmetric", "solid operations"],
+      "example": "Thicken the trimmed sheet into a valid 2 mm solid",
+      "acceptance": {
+        "testId": "parity:thicken",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Thicken the trimmed sheet into a valid 2 mm solid",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "surface-repair",
+      "area": "Surfaces and curves",
+      "tool": "Surface repair",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["enclose", "stitch/heal", "face editing"],
+      "example": "Close a sewn enclosure and validate its volume",
+      "acceptance": {
+        "testId": "parity:surface-repair",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Close a sewn enclosure and validate its volume",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "3d-fit-spline",
+      "area": "Surfaces and curves",
+      "tool": "3D fit spline",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["points", "approximation"],
+      "example": "Create a 3D curve through supplied reference points",
+      "acceptance": {
+        "testId": "parity:3d-fit-spline",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Create a 3D curve through supplied reference points",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "projected-curve",
+      "area": "Surfaces and curves",
+      "tool": "Projected curve",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["two sketches", "surface projection"],
+      "example": "Project a curve onto the enclosure",
+      "acceptance": {
+        "testId": "parity:projected-curve",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Project a curve onto the enclosure",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "bridging-curve",
+      "area": "Surfaces and curves",
+      "tool": "Bridging curve",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["endpoints", "tangent/curvature continuity"],
+      "example": "Bridge two edges with tangent end conditions",
+      "acceptance": {
+        "testId": "parity:bridging-curve",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Bridge two edges with tangent end conditions",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "composite-curve",
+      "area": "Surfaces and curves",
+      "tool": "Composite curve",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["edge chain", "joined curves"],
+      "example": "Join lines and arcs into a sweep path",
+      "acceptance": {
+        "testId": "parity:composite-curve",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Join lines and arcs into a sweep path",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "intersection-curve",
+      "area": "Surfaces and curves",
+      "tool": "Intersection curve",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["surfaces", "sketch regions"],
+      "example": "Derive the exact intersection of two surfaces",
+      "acceptance": {
+        "testId": "parity:intersection-curve",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Derive the exact intersection of two surfaces",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "trim-curve",
+      "area": "Surfaces and curves",
+      "tool": "Trim curve",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["boundaries", "intervals"],
+      "example": "Trim an open 3D curve at a reference plane",
+      "acceptance": {
+        "testId": "parity:trim-curve",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Trim an open 3D curve at a reference plane",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "isocline",
+      "area": "Surfaces and curves",
+      "tool": "Isocline",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["direction", "angle"],
+      "example": "Compute constant-normal-angle curves on a sphere",
+      "acceptance": {
+        "testId": "parity:isocline",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Compute constant-normal-angle curves on a sphere",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "offset-curve",
+      "area": "Surfaces and curves",
+      "tool": "Offset curve",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["distance", "surface"],
+      "example": "Offset a path on a curved sheet",
+      "acceptance": {
+        "testId": "parity:offset-curve",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Offset a path on a curved sheet",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "isoparametric-curve",
+      "area": "Surfaces and curves",
+      "tool": "Isoparametric curve",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["U", "V", "parameter"],
+      "example": "Create and edit an isoparametric surface curve",
+      "acceptance": {
+        "testId": "parity:isoparametric-curve",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Create and edit an isoparametric surface curve",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "edit-curve",
+      "area": "Surfaces and curves",
+      "tool": "Edit curve",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["control points", "degree", "approximation"],
+      "example": "Modify a spline with endpoint continuity retained",
+      "acceptance": {
+        "testId": "parity:edit-curve",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Modify a spline with endpoint continuity retained",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "helix",
+      "area": "Surfaces and curves",
+      "tool": "Helix",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "pitch",
+        "revolutions",
+        "height",
+        "direction",
+        "cone/cylinder"
+      ],
+      "example": "Create a 2 mm pitch helix over 20 mm height",
+      "acceptance": {
+        "testId": "parity:helix",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Create a 2 mm pitch helix over 20 mm height",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "surface-analysis",
+      "area": "Surfaces and curves",
+      "tool": "Surface analysis",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "curvature",
+        "zebra stripes",
+        "draft analysis",
+        "deviation"
+      ],
+      "example": "Analyze a known sphere and a drafted enclosure",
+      "acceptance": {
+        "testId": "parity:surface-analysis",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Analyze a known sphere and a drafted enclosure",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "instances",
+      "area": "Assemblies",
+      "tool": "Instances",
+      "source": "https://cad.onshape.com/help/Content/Assembly/assembly.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["insert", "duplicate", "fix", "hide", "replace"],
+      "example": "Insert two configured local parts",
+      "acceptance": {
+        "testId": "parity:instances",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Insert two configured local parts",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "subassemblies",
+      "area": "Assemblies",
+      "tool": "Subassemblies",
+      "source": "https://cad.onshape.com/help/Content/Assembly/assembly.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["nested structure", "rigid/flexible"],
+      "example": "Insert an articulated subassembly",
+      "acceptance": {
+        "testId": "parity:subassemblies",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Insert an articulated subassembly",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "mate-connectors",
+      "area": "Assemblies",
+      "tool": "Mate connectors",
+      "source": "https://cad.onshape.com/help/Content/Assembly/assembly.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["implicit", "explicit", "axis orientation"],
+      "example": "Align part attachment frames with an offset",
+      "acceptance": {
+        "testId": "parity:mate-connectors",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Align part attachment frames with an offset",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "fastened-mate",
+      "area": "Assemblies",
+      "tool": "Fastened mate",
+      "source": "https://cad.onshape.com/help/Content/Assembly/assembly.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["zero freedom", "offsets"],
+      "example": "Rigidly attach the bracket base to a plate",
+      "acceptance": {
+        "testId": "parity:fastened-mate",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Rigidly attach the bracket base to a plate",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "revolute-mate",
+      "area": "Assemblies",
+      "tool": "Revolute mate",
+      "source": "https://cad.onshape.com/help/Content/Assembly/assembly.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["rotation freedom", "limits"],
+      "example": "Hinge an arm with a 0\u201390 degree limit",
+      "acceptance": {
+        "testId": "parity:revolute-mate",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Hinge an arm with a 0\u201390 degree limit",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "slider-mate",
+      "area": "Assemblies",
+      "tool": "Slider mate",
+      "source": "https://cad.onshape.com/help/Content/Assembly/assembly.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["translation freedom", "limits"],
+      "example": "Slide a shaft between two axial limits",
+      "acceptance": {
+        "testId": "parity:slider-mate",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Slide a shaft between two axial limits",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "cylindrical-mate",
+      "area": "Assemblies",
+      "tool": "Cylindrical mate",
+      "source": "https://cad.onshape.com/help/Content/Assembly/assembly.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["rotation plus translation", "limits"],
+      "example": "Permit coaxial sliding and rotation",
+      "acceptance": {
+        "testId": "parity:cylindrical-mate",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Permit coaxial sliding and rotation",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "pin-slot-mate",
+      "area": "Assemblies",
+      "tool": "Pin-slot mate",
+      "source": "https://cad.onshape.com/help/Content/Assembly/assembly.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["rotation plus slot translation"],
+      "example": "Connect a pin to an elongated slot",
+      "acceptance": {
+        "testId": "parity:pin-slot-mate",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Connect a pin to an elongated slot",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "planar-mate",
+      "area": "Assemblies",
+      "tool": "Planar mate",
+      "source": "https://cad.onshape.com/help/Content/Assembly/assembly.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["two translations plus rotation"],
+      "example": "Constrain a part to slide on a plane",
+      "acceptance": {
+        "testId": "parity:planar-mate",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Constrain a part to slide on a plane",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "ball-mate",
+      "area": "Assemblies",
+      "tool": "Ball mate",
+      "source": "https://cad.onshape.com/help/Content/Assembly/assembly.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["three rotations"],
+      "example": "Connect a ball joint at a fixed center",
+      "acceptance": {
+        "testId": "parity:ball-mate",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Connect a ball joint at a fixed center",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "parallel-mate",
+      "area": "Assemblies",
+      "tool": "Parallel mate",
+      "source": "https://cad.onshape.com/help/Content/Assembly/assembly.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["axis alignment"],
+      "example": "Maintain parallel axes with remaining motion",
+      "acceptance": {
+        "testId": "parity:parallel-mate",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Maintain parallel axes with remaining motion",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "tangent-mate",
+      "area": "Assemblies",
+      "tool": "Tangent mate",
+      "source": "https://cad.onshape.com/help/Content/Assembly/assembly.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["surface contact"],
+      "example": "Maintain tangent contact between rolling shapes",
+      "acceptance": {
+        "testId": "parity:tangent-mate",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Maintain tangent contact between rolling shapes",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "mate-limits",
+      "area": "Assemblies",
+      "tool": "Mate limits",
+      "source": "https://cad.onshape.com/help/Content/Assembly/assembly.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["minimum", "maximum", "offsets"],
+      "example": "Drive a hinge beyond its limit and clamp motion",
+      "acceptance": {
+        "testId": "parity:mate-limits",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Drive a hinge beyond its limit and clamp motion",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "relationships",
+      "area": "Assemblies",
+      "tool": "Relationships",
+      "source": "https://cad.onshape.com/help/Content/Assembly/assembly.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["gear", "rack-and-pinion", "screw", "linear"],
+      "example": "Couple motion at an exact 2:1 ratio",
+      "acceptance": {
+        "testId": "parity:relationships",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Couple motion at an exact 2:1 ratio",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "motion",
+      "area": "Assemblies",
+      "tool": "Motion",
+      "source": "https://cad.onshape.com/help/Content/Assembly/assembly.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["drag", "animation", "freedom diagnostics"],
+      "example": "Animate the articulated assembly over its allowed range",
+      "acceptance": {
+        "testId": "parity:motion",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Animate the articulated assembly over its allowed range",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "assembly-patterns",
+      "area": "Assemblies",
+      "tool": "Assembly patterns",
+      "source": "https://cad.onshape.com/help/Content/Assembly/assembly.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["linear", "circular", "instances"],
+      "example": "Pattern bolts into a circular flange",
+      "acceptance": {
+        "testId": "parity:assembly-patterns",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Pattern bolts into a circular flange",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "in-context-references",
+      "area": "Assemblies",
+      "tool": "In-context references",
+      "source": "https://cad.onshape.com/help/Content/Assembly/assembly.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "edit part",
+        "update context",
+        "broken reference repair"
+      ],
+      "example": "Resize a clearance based on another part",
+      "acceptance": {
+        "testId": "parity:in-context-references",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Resize a clearance based on another part",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "exploded-views",
+      "area": "Assemblies",
+      "tool": "Exploded views",
+      "source": "https://cad.onshape.com/help/Content/Assembly/assembly.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["steps", "translation", "rotation", "explode lines"],
+      "example": "Explode and restore an articulated assembly",
+      "acceptance": {
+        "testId": "parity:exploded-views",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Explode and restore an articulated assembly",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "interference-checks",
+      "area": "Assemblies",
+      "tool": "Interference checks",
+      "source": "https://cad.onshape.com/help/Content/Assembly/assembly.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["part pairs", "exact overlap"],
+      "example": "Measure overlap of two intersecting boxes",
+      "acceptance": {
+        "testId": "parity:interference-checks",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Measure overlap of two intersecting boxes",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "boms",
+      "area": "Assemblies",
+      "tool": "BOMs",
+      "source": "https://cad.onshape.com/help/Content/Assembly/assembly.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "structured",
+        "flattened",
+        "properties",
+        "quantities",
+        "exclusion"
+      ],
+      "example": "Export a nested bill of materials with repeated parts",
+      "acceptance": {
+        "testId": "parity:boms",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Export a nested bill of materials with repeated parts",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "base-and-projected-views",
+      "area": "Drawings",
+      "tool": "Base and projected views",
+      "source": "https://cad.onshape.com/help/Content/drawings.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["standard", "orthographic", "isometric", "scale"],
+      "example": "Create front/top/right views of the bracket",
+      "acceptance": {
+        "testId": "parity:base-and-projected-views",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Create front/top/right views of the bracket",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "section-views",
+      "area": "Drawings",
+      "tool": "Section views",
+      "source": "https://cad.onshape.com/help/Content/drawings.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "full",
+        "half",
+        "aligned",
+        "offset",
+        "associative hatch"
+      ],
+      "example": "Section the turned component through its axis",
+      "acceptance": {
+        "testId": "parity:section-views",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Section the turned component through its axis",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "detail-views",
+      "area": "Drawings",
+      "tool": "Detail views",
+      "source": "https://cad.onshape.com/help/Content/drawings.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["boundary", "scale", "parent association"],
+      "example": "Magnify a hole and update its parent part",
+      "acceptance": {
+        "testId": "parity:detail-views",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Magnify a hole and update its parent part",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "auxiliary-views",
+      "area": "Drawings",
+      "tool": "Auxiliary views",
+      "source": "https://cad.onshape.com/help/Content/drawings.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["reference edge", "orientation"],
+      "example": "Project a sloped face normal to its surface",
+      "acceptance": {
+        "testId": "parity:auxiliary-views",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Project a sloped face normal to its surface",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "drawing-dimensions",
+      "area": "Drawings",
+      "tool": "Drawing dimensions",
+      "source": "https://cad.onshape.com/help/Content/drawings.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "linear",
+        "angular",
+        "radius",
+        "diameter",
+        "ordinate",
+        "baseline",
+        "chain"
+      ],
+      "example": "Dimension bracket holes and overall size",
+      "acceptance": {
+        "testId": "parity:drawing-dimensions",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Dimension bracket holes and overall size",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "tolerances",
+      "area": "Drawings",
+      "tool": "Tolerances",
+      "source": "https://cad.onshape.com/help/Content/drawings.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "symmetric",
+        "deviation",
+        "limits",
+        "geometric",
+        "datum"
+      ],
+      "example": "Add a diameter tolerance and a position callout",
+      "acceptance": {
+        "testId": "parity:tolerances",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Add a diameter tolerance and a position callout",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "annotations",
+      "area": "Drawings",
+      "tool": "Annotations",
+      "source": "https://cad.onshape.com/help/Content/drawings.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "notes",
+        "leaders",
+        "weld",
+        "surface finish",
+        "hole/thread callouts"
+      ],
+      "example": "Annotate a threaded bore and machined face",
+      "acceptance": {
+        "testId": "parity:annotations",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Annotate a threaded bore and machined face",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "center-marks-and-lines",
+      "area": "Drawings",
+      "tool": "Center marks and lines",
+      "source": "https://cad.onshape.com/help/Content/drawings.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["circle marks", "bolt circles", "center lines"],
+      "example": "Mark hole centers and the turned part axis",
+      "acceptance": {
+        "testId": "parity:center-marks-and-lines",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Mark hole centers and the turned part axis",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "tables",
+      "area": "Drawings",
+      "tool": "Tables",
+      "source": "https://cad.onshape.com/help/Content/drawings.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "general",
+        "BOM",
+        "hole",
+        "revision",
+        "bend",
+        "cut list"
+      ],
+      "example": "Place an associative BOM table",
+      "acceptance": {
+        "testId": "parity:tables",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Place an associative BOM table",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "balloons",
+      "area": "Drawings",
+      "tool": "Balloons",
+      "source": "https://cad.onshape.com/help/Content/drawings.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["part/item association", "stacked"],
+      "example": "Balloon each assembly part and retain BOM numbers",
+      "acceptance": {
+        "testId": "parity:balloons",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Balloon each assembly part and retain BOM numbers",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "templates",
+      "area": "Drawings",
+      "tool": "Templates",
+      "source": "https://cad.onshape.com/help/Content/drawings.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "sheet size",
+        "border",
+        "title block",
+        "reusable local templates"
+      ],
+      "example": "Save and reuse an A4 drawing template",
+      "acceptance": {
+        "testId": "parity:templates",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Save and reuse an A4 drawing template",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "multiple-sheets",
+      "area": "Drawings",
+      "tool": "Multiple sheets",
+      "source": "https://cad.onshape.com/help/Content/drawings.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["create", "rename", "reorder", "duplicate"],
+      "example": "Create two associated sheets and export both",
+      "acceptance": {
+        "testId": "parity:multiple-sheets",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Create two associated sheets and export both",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "drawing-associativity",
+      "area": "Drawings",
+      "tool": "Drawing associativity",
+      "source": "https://cad.onshape.com/help/Content/drawings.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["parameter update", "broken-reference diagnostics"],
+      "example": "Change bracket thickness and refresh views and dimensions",
+      "acceptance": {
+        "testId": "parity:drawing-associativity",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Change bracket thickness and refresh views and dimensions",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "drawing-pdf-export",
+      "area": "Drawings",
+      "tool": "Drawing PDF export",
+      "source": "https://cad.onshape.com/help/Content/drawings.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["vector output", "sheet selection", "units"],
+      "example": "Export an A4 dimensioned drawing and inspect independently",
+      "acceptance": {
+        "testId": "parity:drawing-pdf-export",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Export an A4 dimensioned drawing and inspect independently",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "sheet-metal-creation",
+      "area": "Specialized modeling",
+      "tool": "Sheet metal creation",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "extrude",
+        "convert",
+        "thicken",
+        "thickness",
+        "bend allowance"
+      ],
+      "example": "Create a 100 \u00d7 80 \u00d7 40 sheet-metal enclosure",
+      "acceptance": {
+        "testId": "parity:sheet-metal-creation",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Create a 100 \u00d7 80 \u00d7 40 sheet-metal enclosure",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "sheet-metal-flanges",
+      "area": "Specialized modeling",
+      "tool": "Sheet metal flanges",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "edge selection",
+        "angle",
+        "length",
+        "alignment",
+        "offsets"
+      ],
+      "example": "Add four flanges with a 90 degree bend",
+      "acceptance": {
+        "testId": "parity:sheet-metal-flanges",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Add four flanges with a 90 degree bend",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "sheet-metal-bends-and-relief",
+      "area": "Specialized modeling",
+      "tool": "Sheet metal bends and relief",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "bend radius",
+        "relief type",
+        "corner treatment",
+        "joint"
+      ],
+      "example": "Change bend radius and corner relief",
+      "acceptance": {
+        "testId": "parity:sheet-metal-bends-and-relief",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Change bend radius and corner relief",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "sheet-metal-edit",
+      "area": "Specialized modeling",
+      "tool": "Sheet metal edit",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["tab", "hem", "jog", "bend", "unfold/refold", "finish"],
+      "example": "Add a tab and maintain folded/flat association",
+      "acceptance": {
+        "testId": "parity:sheet-metal-edit",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Add a tab and maintain folded/flat association",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "folded-and-flat-association",
+      "area": "Specialized modeling",
+      "tool": "Folded and flat association",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["linked geometry", "flat features", "configurations"],
+      "example": "Edit a flat cut and verify the folded result",
+      "acceptance": {
+        "testId": "parity:folded-and-flat-association",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Edit a flat cut and verify the folded result",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "bend-tables",
+      "area": "Specialized modeling",
+      "tool": "Bend tables",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["bend directions", "angles", "radii", "export"],
+      "example": "Export the enclosure bend table and flat DXF",
+      "acceptance": {
+        "testId": "parity:bend-tables",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Export the enclosure bend table and flat DXF",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "frames",
+      "area": "Specialized modeling",
+      "tool": "Frames",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["path", "profile orientation", "corner treatment"],
+      "example": "Build a rectangular structural frame",
+      "acceptance": {
+        "testId": "parity:frames",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Build a rectangular structural frame",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "profile-libraries",
+      "area": "Specialized modeling",
+      "tool": "Profile libraries",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["standard shapes", "custom profiles", "local reuse"],
+      "example": "Save and reuse a hollow rectangular profile",
+      "acceptance": {
+        "testId": "parity:profile-libraries",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Save and reuse a hollow rectangular profile",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "frame-trimming",
+      "area": "Specialized modeling",
+      "tool": "Frame trimming",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["miter", "butt", "extend", "trim to face"],
+      "example": "Trim a three-member frame junction",
+      "acceptance": {
+        "testId": "parity:frame-trimming",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Trim a three-member frame junction",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "cut-lists",
+      "area": "Specialized modeling",
+      "tool": "Cut lists",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "length",
+        "angle",
+        "quantity",
+        "grouping",
+        "drawing table"
+      ],
+      "example": "Generate a grouped frame cut list",
+      "acceptance": {
+        "testId": "parity:cut-lists",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Generate a grouped frame cut list",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "routing-tools",
+      "area": "Specialized modeling",
+      "tool": "Routing tools",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/feature_tools.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "3D routing curve",
+        "path editing",
+        "filleted corners",
+        "routing profiles"
+      ],
+      "example": "Route a tube through three 3D waypoints",
+      "acceptance": {
+        "testId": "parity:routing-tools",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Route a tube through three 3D waypoints",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "document-tabs",
+      "area": "Document tools",
+      "tool": "Document tabs",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "Part Studio",
+        "Assembly",
+        "Drawing",
+        "rename",
+        "duplicate",
+        "reorder"
+      ],
+      "example": "Create a local document containing all three tab types",
+      "acceptance": {
+        "testId": "parity:document-tabs",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Create a local document containing all three tab types",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "units",
+      "area": "Document tools",
+      "tool": "Units",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["metric", "imperial", "conversion", "precision"],
+      "example": "Open a 1 inch part and verify a 25.4 mm measurement",
+      "acceptance": {
+        "testId": "parity:units",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Open a 1 inch part and verify a 25.4 mm measurement",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "partial",
+      "implementedScope": "Display and numeric input mm/in; internal millimeter geometry",
+      "passingEvidence": []
+    },
+    {
+      "id": "materials",
+      "area": "Document tools",
+      "tool": "Materials",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["density", "local library", "assignment"],
+      "example": "Assign a known density and verify box mass",
+      "acceptance": {
+        "testId": "parity:materials",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Assign a known density and verify box mass",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "properties",
+      "area": "Document tools",
+      "tool": "Properties",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "names",
+        "metadata",
+        "part numbers",
+        "configured properties"
+      ],
+      "example": "Edit properties reflected in BOM and drawing title block",
+      "acceptance": {
+        "testId": "parity:properties",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Edit properties reflected in BOM and drawing title block",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "measurement",
+      "area": "Document tools",
+      "tool": "Measurement",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["distance", "angle", "length", "area", "radius"],
+      "example": "Measure analytic box edges and cylinder radius",
+      "acceptance": {
+        "testId": "parity:measurement",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Measure analytic box edges and cylinder radius",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "mass-properties",
+      "area": "Document tools",
+      "tool": "Mass properties",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["mass", "volume", "center of mass", "inertia"],
+      "example": "Check analytic box inertia and centroid",
+      "acceptance": {
+        "testId": "parity:mass-properties",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Check analytic box inertia and centroid",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "partial",
+      "implementedScope": "Exact area and volume; no materials/centroid/inertia UI",
+      "passingEvidence": []
+    },
+    {
+      "id": "section-views",
+      "area": "Document tools",
+      "tool": "Section views",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["planes", "multiple planes", "offsets", "reverse"],
+      "example": "Section the enclosure without changing solid geometry",
+      "acceptance": {
+        "testId": "parity:section-views",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Section the enclosure without changing solid geometry",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "local-versions",
+      "area": "Document tools",
+      "tool": "Local versions",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["named snapshots", "compare", "restore"],
+      "example": "Restore an earlier version without replacing its original",
+      "acceptance": {
+        "testId": "parity:local-versions",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Restore an earlier version without replacing its original",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "reusable-local-libraries",
+      "area": "Document tools",
+      "tool": "Reusable local libraries",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["parts", "profiles", "materials", "templates"],
+      "example": "Reuse a configured local part in another document",
+      "acceptance": {
+        "testId": "parity:reusable-local-libraries",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Reuse a configured local part in another document",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "project-persistence",
+      "area": "Document tools",
+      "tool": "Project persistence",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "ZIP",
+        "validation",
+        "migration",
+        "autosave",
+        "recovery",
+        "quota handling"
+      ],
+      "example": "Download/reopen the bracket and interrupt an autosave",
+      "acceptance": {
+        "testId": "parity:project-persistence",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Download/reopen the bracket and interrupt an autosave",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "partial",
+      "implementedScope": "Version 1 ZIP with JSON/manifest; transactional latest/previous snapshots; no older migrations/assets yet",
+      "passingEvidence": []
+    },
+    {
+      "id": "step-exchange",
+      "area": "Document tools",
+      "tool": "STEP exchange",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["import", "export", "units", "exact geometry"],
+      "example": "Round-trip a box, cylinder and bracket in an independent reader",
+      "acceptance": {
+        "testId": "parity:step-exchange",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Round-trip a box, cylinder and bracket in an independent reader",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "partial",
+      "implementedScope": "Export UI and kernel STEP self-roundtrip test; no import UI/independent STEP reader",
+      "passingEvidence": []
+    },
+    {
+      "id": "iges-exchange",
+      "area": "Document tools",
+      "tool": "IGES exchange",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["import", "export", "exact surfaces", "units"],
+      "example": "Round-trip trimmed analytic surfaces in an independent reader",
+      "acceptance": {
+        "testId": "parity:iges-exchange",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Round-trip trimmed analytic surfaces in an independent reader",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "stl-exchange",
+      "area": "Document tools",
+      "tool": "STL exchange",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "import reference mesh",
+        "export",
+        "explicit closed-mesh conversion"
+      ],
+      "example": "Round-trip an oriented watertight mesh; reject invalid conversion",
+      "acceptance": {
+        "testId": "parity:stl-exchange",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Round-trip an oriented watertight mesh; reject invalid conversion",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "partial",
+      "implementedScope": "Export UI; independent ASCII volume test; no reference mesh import/conversion",
+      "passingEvidence": []
+    },
+    {
+      "id": "obj-exchange",
+      "area": "Document tools",
+      "tool": "OBJ exchange",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["import reference mesh", "export", "normals", "units"],
+      "example": "Open a reference OBJ and preserve its mesh topology",
+      "acceptance": {
+        "testId": "parity:obj-exchange",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Open a reference OBJ and preserve its mesh topology",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "dxf-exchange",
+      "area": "Document tools",
+      "tool": "DXF exchange",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["documented entity subset", "units", "clear rejection"],
+      "example": "Round-trip sketch and drawing entities and reject unsupported entities",
+      "acceptance": {
+        "testId": "parity:dxf-exchange",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Round-trip sketch and drawing entities and reject unsupported entities",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "svg-exchange",
+      "area": "Document tools",
+      "tool": "SVG exchange",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["documented entity subset", "units", "clear rejection"],
+      "example": "Round-trip supported paths and reject unsupported transforms/entities",
+      "acceptance": {
+        "testId": "parity:svg-exchange",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Round-trip supported paths and reject unsupported transforms/entities",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "planned",
+      "implementedScope": "",
+      "passingEvidence": []
+    },
+    {
+      "id": "desktop-input",
+      "area": "Document tools",
+      "tool": "Desktop input",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": ["mouse", "keyboard", "precise selection", "shortcuts"],
+      "example": "Complete each milestone workflow using desktop input",
+      "acceptance": {
+        "testId": "parity:desktop-input",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Complete each milestone workflow using desktop input",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "partial",
+      "implementedScope": "Numeric sketch/solid workflow; viewport part selection; keyboard undo/save",
+      "passingEvidence": []
+    },
+    {
+      "id": "touch-input",
+      "area": "Document tools",
+      "tool": "Touch input",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "drawers",
+        "touch selection",
+        "numeric precision",
+        "file handling"
+      ],
+      "example": "Complete bracket editing on physical iOS Safari and Android Chrome",
+      "acceptance": {
+        "testId": "parity:touch-input",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Complete bracket editing on physical iOS Safari and Android Chrome",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "partial",
+      "implementedScope": "Responsive drawers/numeric forms and emulated touch workflow; physical devices unverified",
+      "passingEvidence": []
+    },
+    {
+      "id": "worker-resilience",
+      "area": "Document tools",
+      "tool": "Worker resilience",
+      "source": "https://cad.onshape.com/help/Content/PartStudio/part_studios.htm",
+      "documentationReview": "pending",
+      "modesToAudit": [
+        "revision fencing",
+        "cancellation",
+        "restart",
+        "memory cleanup"
+      ],
+      "example": "Cancel a long operation and rebuild from the committed document",
+      "acceptance": {
+        "testId": "parity:worker-resilience",
+        "requiredChecks": [
+          "Execute every documented mode through the interface",
+          "Cancel a long operation and rebuild from the committed document",
+          "Edit upstream parameters and verify associations",
+          "Save/reopen without information loss",
+          "Verify failure keeps the last committed document"
+        ]
+      },
+      "status": "partial",
+      "implementedScope": "Request/revision protocol, cancel/restart, operation timeout, explicit embind disposal; memory plateau/crash tests pending",
+      "passingEvidence": []
+    }
+  ]
+}

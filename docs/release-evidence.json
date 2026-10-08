@@ -1,0 +1,28 @@
+{
+  "artifactSha256": null,
+  "regressionsPassed": false,
+  "independentExchangeReadersPassed": false,
+  "noKnownDataLossDefects": false,
+  "browserVerification": {
+    "chromium": false,
+    "firefox": false,
+    "webkit": false
+  },
+  "physicalDevices": {
+    "iosSafari": {
+      "passed": false,
+      "device": null,
+      "osVersion": null,
+      "date": null,
+      "evidence": null
+    },
+    "androidChrome": {
+      "passed": false,
+      "device": null,
+      "osVersion": null,
+      "date": null,
+      "evidence": null
+    }
+  },
+  "releaseReady": false
+}
