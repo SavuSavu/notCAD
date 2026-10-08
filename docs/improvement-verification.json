@@ -1,0 +1,39 @@
+{
+  "recordedAt": "2026-10-08T23:25:26.591Z",
+  "scope": "Testing infrastructure and improvement plan; no new modeling capability",
+  "localArtifactSha256": "0ff8fd5172ef57b3acd5b723920e6acb3187a49d9aa9622e7e93c7125701a1e7",
+  "rounds": 2,
+  "unitKernelTestsPerRound": 46,
+  "buildsPassed": 2,
+  "liveSmoke": {
+    "url": "https://savusavu.github.io/notCAD/",
+    "testsPerRound": 1,
+    "passedRounds": 2,
+    "finalStats": {
+      "startTime": "2026-10-08T23:24:59.807Z",
+      "duration": 9708.3,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "checks": [
+      "Expected entry asset",
+      "Both WASM responses and MIME types",
+      "600 mm³ solid",
+      "STEP/STL downloads",
+      "Validated project download/open",
+      "IndexedDB reload recovery",
+      "Browser errors"
+    ],
+    "physicalDeviceEvidence": false
+  },
+  "previousPreviewDeployment": {
+    "commit": "afc8629",
+    "workflow": "https://github.com/SavuSavu/notCAD/actions/runs/37858609799",
+    "passedBrowserCases": 52
+  },
+  "newCIJob": "Added locally; not yet pushed or executed in GitHub Actions",
+  "dependencyVulnerabilities": 0,
+  "fullParityComplete": false
+}

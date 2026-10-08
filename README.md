@@ -27,3 +27,5 @@ On platforms without `xvfb-run`, use normal headless tests with `npm run test:e2
 `npm run gate:release` **is expected to fail** while parity, documentation audit, physical devices, independent exchange readers and release evidence remain unfinished. The public preview is explicitly authorized despite these unfinished full-release gates; preview deployment does not declare parity.
 
 See [milestone status](docs/STATUS.md), the [134-row parity register](docs/PARITY.md), [architecture checkpoint](docs/ARCHITECTURE.md), [analytic fixtures](fixtures/analytic.json), and [dependency notices](public/THIRD_PARTY_NOTICES.md). Those records define what is implemented, verified, and still required for later sessions.
+
+The next improvements and acceptance tests are tracked in [the improvement plan](docs/IMPROVEMENT_PLAN.md). After building or downloading the tested artifact, run `npm run test:smoke` to verify the live Pages preview; use `NOTCAD_SMOKE_URL` for staging.
