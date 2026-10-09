@@ -1,0 +1,25 @@
+{
+  "sourceRevision": null,
+  "artifactSha256": null,
+  "knownDataLossDefects": null,
+  "gates": {
+    "geometry": { "status": "pending", "evidence": [] },
+    "sketch-and-assembly-constraints": { "status": "pending", "evidence": [] },
+    "history-and-reference-repair": { "status": "pending", "evidence": [] },
+    "exchange-independent-readers": { "status": "pending", "evidence": [] },
+    "persistence-and-migrations": { "status": "pending", "evidence": [] },
+    "all-seven-interface-workflows": { "status": "pending", "evidence": [] },
+    "cross-browser": { "status": "pending", "evidence": [] },
+    "physical-ios-safari": { "status": "pending", "evidence": [] },
+    "physical-android-chrome": { "status": "pending", "evidence": [] },
+    "wasm-memory-and-recovery": { "status": "pending", "evidence": [] },
+    "dependency-source-reproducibility": {
+      "status": "pending",
+      "evidence": []
+    },
+    "rollback-and-deployed-smoke-procedure": {
+      "status": "pending",
+      "evidence": []
+    }
+  }
+}

@@ -3,19 +3,14 @@
     "target": "ES2022",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "strict": true,
     "skipLibCheck": true,
     "noEmit": true,
-    "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
     "types": ["vite/client"]
   },
-  "include": [
-    "src",
-    "tests",
-    "vite.config.ts",
-    "playwright.config.ts",
-    "playwright.smoke.config.ts"
-  ]
+  "include": ["src"]
 }

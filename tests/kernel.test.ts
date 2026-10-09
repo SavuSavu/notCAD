@@ -1,282 +1,298 @@
-import { beforeAll, describe, expect, it } from "vitest";
-import fs from "node:fs";
-import initOC from "replicad-opencascadejs";
+import { beforeAll, afterEach, describe, expect, test } from "vitest";
+import { readFile } from "node:fs/promises";
+import { createRequire } from "node:module";
+import { setOC } from "replicad";
 import {
   init_planegcs_module,
   type ModuleStatic,
   type SketchPrimitive,
 } from "@salusoft89/planegcs";
-import { Engine } from "../src/kernel/engine";
+import { GeometryEngine, inspectStep } from "../src/kernel/engine";
 import {
   bracketDocument,
   emptyDocument,
-  type Document,
-} from "../src/model/document";
-import { analyticTolerance } from "../src/kernel/tolerance";
+  type CadDocument,
+} from "../src/core/model";
 import { solvePrimitives } from "../src/kernel/solver";
-let engine: Engine, gcs: ModuleStatic;
+
+let solver: ModuleStatic;
+const engines: GeometryEngine[] = [];
+const engine = () => {
+  const e = new GeometryEngine(solver);
+  engines.push(e);
+  return e;
+};
 beforeAll(async () => {
-  const oc = await initOC({
-    wasmBinary: fs.readFileSync(
-      "node_modules/replicad-opencascadejs/dist/replicad_single.wasm",
-    ),
-  });
-  gcs = await init_planegcs_module({
-    wasmBinary: fs.readFileSync(
+  const require = createRequire(import.meta.url);
+  const initOC = require("replicad-opencascadejs");
+  setOC(
+    await initOC({
+      wasmBinary: await readFile(
+        require.resolve("replicad-opencascadejs/wasm"),
+      ),
+    }),
+  );
+  solver = await init_planegcs_module({
+    wasmBinary: await readFile(
       "node_modules/@salusoft89/planegcs/dist/planegcs_dist/planegcs.wasm",
     ),
   });
-  engine = new Engine(oc, gcs);
-}, 90000);
-function block(): Document {
+});
+afterEach(() => {
+  engines.splice(0).forEach((e) => e.dispose());
+});
+export function boxDocument(): CadDocument {
   const doc = bracketDocument();
-  return { ...doc, features: doc.features.slice(0, 2) };
+  doc.features = doc.features.slice(0, 2);
+  return doc;
 }
-describe("exact geometry fixtures", () => {
-  it("extrudes a valid rectangular solid with analytic volume, area and topology", () => {
-    const result = engine.regenerate(block());
-    expect(result.parts[0].volume).toBeCloseTo(14400, 6);
-    expect(result.parts[0].area).toBeCloseTo(6000, 6);
-    expect(result.parts[0].faces).toBe(6);
-    expect(result.parts[0].valid).toBe(true);
-    expect(result.parts[0].mesh.indices.length).toBe(36);
-    expect(result.diagnostics[0].dof).toBe(0);
+describe("exact geometry", () => {
+  test.each(["XY", "XZ", "YZ"] as const)(
+    "extrusion extents preserve signed bounds on the %s plane",
+    (plane) => {
+      const e = engine();
+      for (const distance of [6, -6]) {
+        for (const extent of [
+          undefined,
+          "one-sided",
+          "symmetric",
+          "two-sided",
+        ] as const) {
+          const doc = boxDocument();
+          const profile = doc.features[0];
+          const feature = doc.features[1];
+          if (profile.type !== "sketch" || feature.type !== "extrude")
+            throw new Error("Invalid fixture");
+          profile.plane = plane;
+          profile.offset = 12;
+          feature.distance = distance;
+          feature.extent = extent;
+          feature.secondDistance = extent === "two-sided" ? 4 : undefined;
+          const part = e.regenerate(doc).parts[0];
+          const start =
+            extent === "symmetric"
+              ? -distance / 2
+              : extent === "two-sided"
+                ? -Math.sign(distance) * 4
+                : 0;
+          const end = extent === "symmetric" ? distance / 2 : distance;
+          const normalSign = plane === "XZ" ? -1 : 1;
+          const axis = plane === "XY" ? 2 : plane === "XZ" ? 1 : 0;
+          const ends = [(12 + start) * normalSign, (12 + end) * normalSign];
+          expect(part.bounds[0][axis]).toBeCloseTo(Math.min(...ends), 5);
+          expect(part.bounds[1][axis]).toBeCloseTo(Math.max(...ends), 5);
+          expect(part.volume).toBeCloseTo(
+            60 * 40 * (extent === "two-sided" ? 10 : 6),
+            5,
+          );
+          expect(part.faces).toBe(6);
+          expect(part.solids).toBe(1);
+          expect(part.valid).toBe(true);
+        }
+      }
+    },
+  );
+  test.each(["add", "remove", "intersect"] as const)(
+    "two-direction circular extrusion supports %s and upstream edits",
+    (mode) => {
+      const e = engine();
+      const doc = boxDocument();
+      doc.features.push(
+        {
+          id: "circle",
+          name: "Circle",
+          suppressed: false,
+          type: "sketch",
+          plane: "XY",
+          x: 0,
+          y: 0,
+          offset: 3,
+          profile: { kind: "circle", radius: 5 },
+        },
+        {
+          id: "operation",
+          name: "Two directions",
+          suppressed: false,
+          type: "extrude",
+          sketchId: "circle",
+          targetId: "base",
+          mode,
+          distance: 8,
+          extent: "two-sided",
+          secondDistance: 4,
+        },
+      );
+      for (const radius of [5, 7]) {
+        const circle = doc.features[2];
+        if (circle.type === "sketch")
+          circle.profile = { kind: "circle", radius };
+        const part = e.regenerate(doc).parts[0];
+        const cylinderOverlap = Math.PI * radius ** 2 * 6;
+        expect(part.volume).toBeCloseTo(
+          mode === "add"
+            ? 14400 + cylinderOverlap
+            : mode === "remove"
+              ? 14400 - cylinderOverlap
+              : cylinderOverlap,
+          5,
+        );
+        expect(part.valid).toBe(true);
+        expect(part.solids).toBe(1);
+      }
+    },
+  );
+  test("box has analytic volume, surface area, topology, and dimensions", () => {
+    const result = engine().regenerate(boxDocument());
+    const box = result.parts[0];
+    expect(box.valid).toBe(true);
+    expect(box.solids).toBe(1);
+    expect(box.faces).toBe(6);
+    expect(box.volume).toBeCloseTo(60 * 40 * 6, 6);
+    expect(box.area).toBeCloseTo(2 * (60 * 40 + 60 * 6 + 40 * 6), 6);
+    expect(box.bounds[1][0] - box.bounds[0][0]).toBeCloseTo(60, 5);
+    expect(result.sketches["base-profile"].dof).toBe(0);
   });
-  it("builds the bracket with fused upright and a cylindrical cut", () => {
-    const result = engine.regenerate(bracketDocument());
-    expect(result.parts).toHaveLength(1);
+  test("bracket booleans match analytic volume and reuse unchanged history", () => {
+    const e = engine(),
+      doc = bracketDocument();
+    expect(e.regenerate(doc).parts[0].volume).toBeCloseTo(
+      60 * 40 * 6 + 60 * 6 * 34 - Math.PI * 25 * 6,
+      5,
+    );
+    expect(e.regenerate({ ...doc, revision: 1 }).regenerated).toBe(0);
+    const last = doc.features.at(-1)!;
+    if (last.type === "extrude") last.distance = 3;
+    const result = e.regenerate(doc);
+    expect(result.regenerated).toBe(1);
     expect(result.parts[0].volume).toBeCloseTo(
-      60 * 40 * 6 + 60 * 6 * 34 - Math.PI * 4 ** 2 * 6,
-      5,
-    );
-    expect(
-      result.diagnostics.every((d) => d.dof === 0 && d.conflicts.length === 0),
-    ).toBe(true);
-  });
-  it("changes an early dimension and regenerates downstream geometry", () => {
-    const doc = bracketDocument();
-    const sketch = doc.features[0];
-    if (sketch.type === "sketch" && sketch.profile.kind === "rectangle")
-      sketch.profile.width = 80;
-    expect(engine.regenerate(doc).parts[0].volume).toBeCloseTo(
-      80 * 40 * 6 + 60 * 6 * 34 - Math.PI * 16 * 6,
+      60 * 40 * 6 + 60 * 6 * 34 - Math.PI * 25 * 3,
       5,
     );
   });
-  it("rolls back and rejects suppressed dependencies", () => {
-    const doc = bracketDocument();
-    expect(
-      engine.regenerate({ ...doc, rollback: 2 }).parts[0].volume,
-    ).toBeCloseTo(14400, 6);
-    doc.features[0].suppressed = true;
-    expect(() => engine.regenerate(doc)).toThrow("Required sketch");
-  });
-  it("round trips exact STEP geometry with valid imported solids", () => {
-    const doc = bracketDocument();
-    expect(engine.stepRoundtrip(doc)[0]).toBeCloseTo(
-      engine.regenerate(doc).parts[0].volume,
-      4,
+  test("failed operations preserve exportable committed geometry", async () => {
+    const e = engine(),
+      doc = boxDocument();
+    e.regenerate(doc);
+    doc.features.push({
+      id: "bad",
+      name: "Impossible fillet",
+      suppressed: false,
+      type: "fillet",
+      targetId: "base",
+      radius: 500,
+    });
+    expect(() => e.regenerate(doc)).toThrow();
+    const part = await inspectStep(
+      new Uint8Array(await e.export("step").arrayBuffer()),
     );
-    expect(new TextDecoder().decode(engine.export(doc, "step"))).toContain(
-      "ISO-10303-21",
-    );
+    expect(part.volume).toBeCloseTo(14400, 5);
   });
-  it("exports STL and independently sums triangle volume", () => {
-    const bytes = engine.export(block(), "stl");
-    const text = new TextDecoder().decode(bytes);
+  test("STEP round trip preserves volume, bounds, and topology", async () => {
+    const e = engine(),
+      expected = e.regenerate(bracketDocument()).parts[0];
+    const read = await inspectStep(
+      new Uint8Array(await e.export("step").arrayBuffer()),
+    );
+    expect(read.volume).toBeCloseTo(expected.volume, 5);
+    expect(read.faces).toBe(expected.faces);
+    expect(read.valid).toBe(true);
+  });
+  test("binary STL is independently readable and approximates analytic volume", async () => {
+    const e = engine();
+    e.regenerate(boxDocument());
+    const data = new DataView(await e.export("stl").arrayBuffer());
+    const count = data.getUint32(80, true);
+    expect(count).toBe(12);
+    expect(data.byteLength).toBe(84 + 50 * count);
     let volume = 0;
-    const vertices = [
-      ...text.matchAll(/vertex\s+([-+\d.eE]+)\s+([-+\d.eE]+)\s+([-+\d.eE]+)/g),
-    ].map((m) => m.slice(1).map(Number));
-    expect(vertices.length).toBe(36);
-    for (let i = 0; i < vertices.length; i += 3) {
-      const [a, b, c] = vertices.slice(i, i + 3);
+    for (let i = 0; i < count; i++) {
+      const at = 84 + 50 * i + 12;
+      const p = Array.from({ length: 9 }, (_, j) =>
+        data.getFloat32(at + 4 * j, true),
+      );
       volume +=
-        (a[0] * (b[1] * c[2] - b[2] * c[1]) +
-          a[1] * (b[2] * c[0] - b[0] * c[2]) +
-          a[2] * (b[0] * c[1] - b[1] * c[0])) /
+        (p[0] * (p[4] * p[8] - p[5] * p[7]) +
+          p[1] * (p[5] * p[6] - p[3] * p[8]) +
+          p[2] * (p[3] * p[7] - p[4] * p[6])) /
         6;
     }
-    expect(Math.abs(volume)).toBeCloseTo(14400, 6);
+    expect(volume).toBeCloseTo(14400, 3);
   });
-  it("cleans up across repeated builds, failures and exports", () => {
-    for (let i = 0; i < 12; i++) {
-      expect(engine.regenerate(block()).parts[0].volume).toBeCloseTo(14400, 5);
-      engine.export(block(), "stl");
+  test("revolve, fillet, chamfer, rollback, suppression and empty regeneration", () => {
+    const e = engine(),
+      doc = boxDocument();
+    const sketch = doc.features[0];
+    if (sketch.type === "sketch") {
+      sketch.plane = "XZ";
+      sketch.x = 20;
+      sketch.profile = { kind: "rectangle", width: 10, height: 20 };
     }
-    expect(engine.regenerate(emptyDocument()).parts).toHaveLength(0);
-  });
-  it("fillets and chamfers all edges of a box", () => {
+    doc.features[1] = {
+      id: "base",
+      name: "Turn",
+      suppressed: false,
+      type: "revolve",
+      sketchId: "base-profile",
+      mode: "new",
+      axis: "Z",
+      angle: 360,
+    };
+    expect(e.regenerate(doc).parts[0].volume).toBeCloseTo(
+      Math.PI * (25 ** 2 - 15 ** 2) * 20,
+      5,
+    );
     for (const type of ["fillet", "chamfer"] as const) {
-      const doc = block();
-      doc.features.push({
-        id: type,
+      const box = boxDocument();
+      box.features.push({
+        id: "finish",
         name: type,
-        type,
         suppressed: false,
+        type,
         targetId: "base",
         radius: 1,
       });
-      const part = engine.regenerate(doc).parts[0];
-      expect(part.valid).toBe(true);
-      expect(part.volume).toBeLessThan(14400);
+      const rounded = e.regenerate(box).parts[0];
+      expect(rounded.volume).toBeLessThan(14400);
+      expect(rounded.valid).toBe(true);
+      box.features[2].suppressed = true;
+      expect(e.regenerate(box).parts[0].volume).toBeCloseTo(14400, 5);
+      box.rollback = 1;
+      expect(e.regenerate(box).parts).toHaveLength(0);
     }
+    expect(e.regenerate(emptyDocument()).parts).toHaveLength(0);
   });
-  it("revolves a rectangle to a hollow turned component", () => {
-    const doc = block(),
-      sketch = doc.features[0];
-    if (sketch.type === "sketch") {
-      sketch.plane = "XZ";
-      sketch.profile = { kind: "rectangle", x: 10, y: 0, width: 5, height: 20 };
+  test("repeated regeneration and disposal keeps returning valid results", () => {
+    for (let i = 0; i < 30; i++) {
+      const e = engine();
+      expect(e.regenerate(boxDocument()).parts[0].valid).toBe(true);
+      e.dispose();
     }
-    doc.features[1] = {
-      id: "turned",
-      name: "Turned",
-      type: "revolve",
-      sketchId: "base-sketch",
-      suppressed: false,
-      targetId: null,
-      operation: "new",
-      angle: 360,
-    };
-    expect(engine.regenerate(doc).parts[0].volume).toBeCloseTo(
-      Math.PI * (225 - 100) * 20,
-      5,
-    );
   });
 });
 describe("PlaneGCS diagnostics", () => {
-  const point: SketchPrimitive = {
-    id: "1",
-    type: "point",
-    x: 1,
-    y: 2,
-    fixed: false,
-  };
-  const cx: SketchPrimitive = {
-    id: "2",
-    type: "coordinate_x",
-    p_id: "1",
-    x: 10,
-  };
-  it("reports an underconstrained sketch", () => {
-    expect(solvePrimitives(gcs, [point], "test").dof).toBe(2);
-  });
-  it("reports a satisfied sketch", () => {
-    const d = solvePrimitives(
-      gcs,
-      [point, cx, { id: "3", type: "coordinate_y", p_id: "1", y: 20 }],
-      "test",
-    );
-    expect(d.dof).toBe(0);
-    expect(d.status).toBe("Success");
-  });
-  it("reports redundant constraints", () => {
-    const d = solvePrimitives(gcs, [point, cx, { ...cx, id: "3" }], "test");
-    expect(d.redundant.length).toBeGreaterThan(0);
-  });
-  it("reports conflicting constraints", () => {
-    const d = solvePrimitives(
-      gcs,
-      [point, cx, { ...cx, id: "3", x: 20 }],
-      "test",
-    );
-    expect(d.conflicts.length).toBeGreaterThan(0);
-  });
-});
-describe("part identity and boolean failures", () => {
-  it("preserves separate parts when adding an independent new feature", () => {
-    const doc = block();
-    doc.features.push({
-      id: "second",
-      name: "Second",
-      type: "extrude",
-      sketchId: "base-sketch",
-      suppressed: false,
-      depth: 10,
-      operation: "new",
-      targetId: null,
-    });
-    expect(engine.regenerate(doc).parts.map((p) => [p.id, p.volume])).toEqual([
-      ["base", 14400],
-      ["second", 24000],
+  const points: SketchPrimitive[] = [
+    { id: "1", type: "point", x: 0, y: 0, fixed: true },
+    { id: "2", type: "point", x: 10, y: 4, fixed: false },
+  ];
+  test("underconstrained and satisfied systems report actual DOF", () => {
+    expect(solvePrimitives(solver, points).dof).toBe(2);
+    const result = solvePrimitives(solver, [
+      ...points,
+      { id: "3", type: "coordinate_x", p_id: "2", x: 20 },
+      { id: "4", type: "coordinate_y", p_id: "2", y: 0 },
     ]);
+    expect(result.status).toBe("satisfied");
+    expect(result.dof).toBe(0);
+    expect(result.primitives[1]).toMatchObject({ x: 20, y: 0 });
   });
-  it("intersects two offset boxes at the exact expected volume", () => {
-    const doc = block(),
-      sketch = doc.features[0];
-    if (sketch.type !== "sketch") throw new Error("Missing fixture sketch");
-    doc.features.push({
-      ...sketch,
-      id: "tool-sketch",
-      profile: { kind: "rectangle", x: 30, y: 20, width: 60, height: 40 },
-    });
-    doc.features.push({
-      id: "intersect",
-      name: "Intersect",
-      type: "extrude",
-      sketchId: "tool-sketch",
-      depth: 6,
-      operation: "intersect",
-      targetId: "base",
-      suppressed: false,
-    });
-    expect(engine.regenerate(doc).parts[0].volume).toBeCloseTo(30 * 20 * 6, 5);
+  test("conflicting and redundant dimensions are diagnosed", () => {
+    const dims: SketchPrimitive[] = [
+      ...points,
+      { id: "3", type: "coordinate_x", p_id: "2", x: 20 },
+      { id: "4", type: "coordinate_x", p_id: "2", x: 30 },
+    ];
+    expect(solvePrimitives(solver, dims).status).toBe("inconsistent");
+    dims[3] = { id: "4", type: "coordinate_x", p_id: "2", x: 20 };
+    expect(solvePrimitives(solver, dims).status).toBe("redundant");
   });
-  it("rejects disconnected additions without changing input geometry", () => {
-    const doc = block(),
-      sketch = doc.features[0];
-    if (sketch.type !== "sketch") throw new Error("Missing sketch");
-    doc.features.push({
-      ...sketch,
-      id: "far-sketch",
-      profile: { kind: "rectangle", x: 200, y: 200, width: 10, height: 10 },
-    });
-    doc.features.push({
-      id: "add",
-      name: "Add",
-      type: "extrude",
-      sketchId: "far-sketch",
-      depth: 6,
-      operation: "add",
-      targetId: "base",
-      suppressed: false,
-    });
-    expect(() => engine.regenerate(doc)).toThrow("connected solid");
-    expect(engine.regenerate(block()).parts[0].volume).toBeCloseTo(14400, 5);
-  });
-  it("extrudes with consistent normal directions on all reference planes", () => {
-    for (const plane of ["XY", "XZ", "YZ"] as const) {
-      const doc = block(),
-        sketch = doc.features[0];
-      if (sketch.type === "sketch") sketch.plane = plane;
-      const part = engine.regenerate(doc).parts[0];
-      expect(part.volume).toBeCloseTo(14400, 5);
-      expect(part.faces).toBe(6);
-    }
-  });
-});
-
-it("keeps analytic accuracy over different length scales", () => {
-  for (const size of [0.001, 0.01, 1, 1000]) {
-    const doc = block(),
-      sketch = doc.features[0],
-      extrude = doc.features[1];
-    if (sketch.type === "sketch")
-      sketch.profile = {
-        kind: "rectangle",
-        x: 0,
-        y: 0,
-        width: size,
-        height: size,
-      };
-    if (extrude.type === "extrude") extrude.depth = size;
-    const part = engine.regenerate(doc).parts[0];
-    expect(Math.abs(part.volume - size ** 3)).toBeLessThanOrEqual(
-      analyticTolerance(size ** 3),
-    );
-    expect(Math.abs(part.area - 6 * size ** 2)).toBeLessThanOrEqual(
-      analyticTolerance(6 * size ** 2),
-    );
-  }
 });

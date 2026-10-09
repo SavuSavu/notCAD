@@ -1,98 +1,80 @@
-import type { Request, Response } from "./protocol";
-export class WorkerClient {
+import type { CadDocument } from "../core/model";
+import type { KernelResponse, ModelResult, Operation } from "./protocol";
+
+type Pending = {
+  revision: number;
+  resolve: (value: unknown) => void;
+  reject: (reason: Error) => void;
+  timer: ReturnType<typeof setTimeout>;
+};
+export class KernelClient {
   private worker: Worker;
   private nextId = 0;
-  private disposed = false;
-  private pending = new Map<
-    number,
-    {
-      resolve(value: Response): void;
-      reject(error: Error): void;
-      timer: ReturnType<typeof setTimeout>;
-      revision: number;
-      type: Request["type"];
-    }
-  >();
-  constructor() {
-    this.worker = this.createWorker();
+  private pending = new Map<number, Pending>();
+  constructor(
+    private factory = () =>
+      new Worker(new URL("./worker.ts", import.meta.url), { type: "module" }),
+  ) {
+    this.worker = this.create();
   }
-  private createWorker() {
-    const worker = new Worker(new URL("./cad.worker.ts", import.meta.url), {
-      type: "module",
-    });
-    worker.onmessage = (event: MessageEvent<Response>) => {
-      if (worker !== this.worker || this.disposed) return;
-      const pending = this.pending.get(event.data.id);
-      if (!pending) return;
-      if (
-        event.data.revision !== pending.revision ||
-        (event.data.ok && event.data.type !== pending.type)
-      )
-        return;
+  private create() {
+    const worker = this.factory();
+    worker.onmessage = (event: MessageEvent<KernelResponse>) => {
+      const message = event.data,
+        pending = this.pending.get(message.id);
+      if (!pending || message.revision !== pending.revision) return;
       clearTimeout(pending.timer);
-      this.pending.delete(event.data.id);
-      event.data.ok
-        ? pending.resolve(event.data)
-        : pending.reject(new Error(event.data.error));
+      this.pending.delete(message.id);
+      if (message.ok) pending.resolve(message.result);
+      else pending.reject(new Error(message.error));
     };
-    worker.onerror = () => {
-      if (worker === this.worker)
-        this.cancel(
-          "CAD worker crashed. The committed project is preserved; retry the operation.",
-        );
-    };
+    worker.onerror = () =>
+      this.reset(
+        "Geometry worker stopped. Your committed document is preserved; use Restart geometry.",
+      );
+    worker.onmessageerror = () =>
+      this.reset("Geometry response could not be read. Use Restart geometry.");
     return worker;
   }
-  request(
-    request:
-      | Omit<Extract<Request, { type: "regenerate" }>, "id">
-      | Omit<Extract<Request, { type: "export" }>, "id">
-      | Omit<Extract<Request, { type: "roundtrip" }>, "id">,
-  ): Promise<Response> {
-    if (this.disposed) return Promise.reject(new Error("Workspace closed"));
+  request<T>(operation: Operation, revision: number): Promise<T> {
     const id = ++this.nextId;
     return new Promise((resolve, reject) => {
       const timer = setTimeout(
         () =>
-          this.cancel(
-            "CAD operation timed out. The committed project is preserved.",
+          this.reset(
+            "Geometry operation timed out. Your committed document is preserved; use Restart geometry.",
           ),
-        90000,
+        60000,
       );
       this.pending.set(id, {
-        resolve,
+        revision,
+        resolve: resolve as (value: unknown) => void,
         reject,
         timer,
-        revision: request.revision,
-        type: request.type,
       });
-      try {
-        this.worker.postMessage({ ...request, id });
-      } catch (error) {
-        clearTimeout(timer);
-        this.pending.delete(id);
-        reject(
-          error instanceof Error ? error : new Error("Cannot send CAD request"),
-        );
-      }
+      this.worker.postMessage({ id, revision, operation });
     });
   }
-  cancel(message = "Operation cancelled. The committed project is preserved.") {
-    if (this.disposed) return;
+  regenerate(document: CadDocument) {
+    return this.request<ModelResult>(
+      { kind: "regenerate", document },
+      document.revision,
+    );
+  }
+  reset(reason = "Operation cancelled. Committed model preserved.") {
     this.worker.terminate();
     for (const pending of this.pending.values()) {
       clearTimeout(pending.timer);
-      pending.reject(new Error(message));
+      pending.reject(new Error(reason));
     }
     this.pending.clear();
-    this.worker = this.createWorker();
+    this.worker = this.create();
   }
   dispose() {
-    this.disposed = true;
     this.worker.terminate();
     for (const pending of this.pending.values()) {
       clearTimeout(pending.timer);
-      pending.reject(new Error("Workspace closed"));
+      pending.reject(new Error("Workspace closed."));
     }
     this.pending.clear();
   }

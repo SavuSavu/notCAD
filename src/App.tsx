@@ -1,1052 +1,790 @@
 import { useEffect, useRef, useState } from "react";
-import { Viewport } from "./Viewport";
-import { WorkerClient } from "./kernel/client";
-import type { ModelResult } from "./kernel/protocol";
 import {
   bracketDocument,
   emptyDocument,
-  revise,
-  validateDocument,
-  type Document,
+  moveFeature,
+  parseDocument,
+  replaceFeature,
+  type CadDocument,
   type Feature,
-  type Sketch,
-} from "./model/document";
-import { formatMeasurement } from "./model/measurement";
-import { History } from "./model/history";
-import { moveFeature, removeFeature } from "./model/graph";
-import {
-  decodeProject,
-  download,
-  encodeProject,
-  filename,
-  MAX_ARCHIVE_BYTES,
-} from "./storage/project";
-import { loadLocal, saveLocal } from "./storage/autosave";
-const emptyModel: ModelResult = { parts: [], diagnostics: [] };
-type Tool =
-  | "rectangle"
-  | "circle"
-  | "extrude"
-  | "revolve"
-  | "fillet"
-  | "chamfer";
+} from "./core/model";
+import { History } from "./core/history";
+import { Autosave } from "./core/persistence";
+import { decodeProject, download, encodeProject } from "./core/project";
+import { KernelClient } from "./kernel/client";
+import type { ModelResult } from "./kernel/protocol";
+import { Viewport } from "./components/Viewport";
+import { FeatureEditor, newFeature } from "./components/FeatureEditor";
+
+const EMPTY: ModelResult = { parts: [], sketches: {}, regenerated: 0 };
+const icons: Record<Feature["type"], string> = {
+  sketch: "▱",
+  extrude: "↥",
+  revolve: "⟳",
+  fillet: "◜",
+  chamfer: "◩",
+};
 export default function App() {
-  const history = useRef(new History(emptyDocument()));
-  const [doc, setDoc] = useState(history.current.current);
-  const [model, setModel] = useState<ModelResult>(emptyModel);
-  const [busy, setBusy] = useState(true);
-  const [hydrated, setHydrated] = useState(false);
-  const [error, setError] = useState("");
-  const [storage, setStorage] = useState("Opening local recovery…");
-  const [selected, setSelected] = useState<string | null>(null);
-  const [tool, setTool] = useState<Tool | null>(null);
-  const [editing, setEditing] = useState<Feature | null>(null);
-  const [view, setView] = useState(0);
-  const [inspectOpen, setInspectOpen] = useState(false);
-  const [drawer, setDrawer] = useState(false);
-  const client = useRef<WorkerClient | null>(null);
-  const lock = useRef(true);
-  const sequence = useRef(0);
-  const saveQueue = useRef(Promise.resolve());
-  const fileInput = useRef<HTMLInputElement>(null);
-  function persist(next: Document) {
-    setStorage("Saving on this device…");
-    saveQueue.current = saveQueue.current
-      .then(() => saveLocal(next))
-      .then(() => setStorage("Saved on this device"))
-      .catch((e) => {
-        setStorage(
-          `Local save failed: ${e.message}. Download your project to keep a recovery copy.`,
+  const [doc, setDoc] = useState(emptyDocument),
+    [model, setModel] = useState<ModelResult>(EMPTY),
+    [preview, setPreview] = useState<{
+      doc: CadDocument;
+      model: ModelResult;
+    } | null>(null);
+  const [selected, setSelected] = useState<string | null>(null),
+    [draft, setDraft] = useState<Feature | null>(null);
+  const [busy, setBusy] = useState("Loading local geometry engines…"),
+    [ready, setReady] = useState(false),
+    [error, setError] = useState("");
+  const [saved, setSaved] = useState("Checking local recovery…"),
+    [drawer, setDrawer] = useState(false),
+    [exportOpen, setExportOpen] = useState(false);
+  const history = useRef(new History(doc)),
+    kernel = useRef<KernelClient | null>(null),
+    store = useRef<Autosave | null>(null),
+    fileInput = useRef<HTMLInputElement>(null);
+  const working = useRef(true),
+    generation = useRef(0),
+    latestSave = useRef(0);
+  const [historyVersion, setHistoryVersion] = useState(0);
+  void historyVersion;
+  const save = async (document: CadDocument) => {
+    const saveId = ++latestSave.current;
+    setSaved("Saving to this device…");
+    try {
+      await store.current!.save(document);
+      if (saveId === latestSave.current) setSaved("Saved on this device");
+    } catch (e) {
+      if (saveId === latestSave.current) {
+        setSaved("Autosave failed · download recovery");
+        setError(
+          e instanceof Error
+            ? e.message
+            : "Local storage failed. Download a recovery copy.",
         );
-      });
-  }
-  useEffect(() => {
-    client.current = new WorkerClient();
-    let alive = true;
-    const initialSequence = ++sequence.current;
-    (async () => {
-      let recovered: Document | null = null;
-      let recoveryFailed = false;
-      try {
-        recovered = await loadLocal();
-      } catch (e) {
-        recoveryFailed = true;
-        if (alive)
-          setStorage(
-            `Recovery unavailable: ${(e as Error).message}. Download your project to save.`,
-          );
       }
+    }
+  };
+  useEffect(() => {
+    const k = new KernelClient(),
+      s = new Autosave();
+    kernel.current = k;
+    store.current = s;
+    let mounted = true;
+    (async () => {
+      let restored: CadDocument = history.current.current;
       try {
-        if (!alive || initialSequence !== sequence.current) return;
-        const initial = recovered ?? history.current.current;
-        // Restore project data before loading geometry so worker failure or
-        // cancellation cannot remove the user's downloadable recovery copy.
-        history.current = new History(initial);
-        setDoc(history.current.current);
-        setHydrated(true);
-        if (recovered) setStorage("Recovered project data on this device");
-        const response = await client.current!.request({
-          type: "regenerate",
-          revision: initial.revision,
-          document: initial,
-        });
-        if (
-          alive &&
-          initialSequence === sequence.current &&
-          response.ok &&
-          response.type === "regenerate"
-        ) {
-          history.current = new History(initial);
-          setDoc(initial);
-          setModel(response.result);
-          if (!recoveryFailed) {
-            if (recovered) setStorage("Recovered your last local project");
-            else setStorage("Ready · project stays on your device");
-          }
-        }
+        const recovery = await s.restore();
+        if (recovery.document) restored = recovery.document;
+        if (mounted)
+          setSaved(
+            recovery.recovered
+              ? "Recovered previous snapshot"
+              : "Saved on this device",
+          );
       } catch (e) {
-        if (alive && initialSequence === sequence.current)
-          setError((e as Error).message);
+        if (mounted) {
+          setError(
+            e instanceof Error ? e.message : "Local storage unavailable.",
+          );
+          setSaved("Autosave unavailable · download recovery");
+        }
+      }
+      history.current = new History(restored);
+      if (mounted) setDoc(restored);
+      try {
+        const result = await k.regenerate(restored);
+        if (!mounted) return;
+        history.current = new History(restored);
+        setDoc(restored);
+        setModel(result);
+        setReady(true);
+      } catch (e) {
+        if (mounted)
+          setError(
+            e instanceof Error ? e.message : "Could not initialize geometry.",
+          );
       } finally {
-        if (alive && initialSequence === sequence.current) {
-          setBusy(false);
-          lock.current = false;
+        if (mounted) {
+          working.current = false;
+          setBusy("");
         }
       }
     })();
+    if (!location.hash) historyReplaceHash();
     return () => {
-      alive = false;
-      client.current?.dispose();
+      mounted = false;
+      k.dispose();
+      void s.close();
     };
   }, []);
-  async function apply(
-    next: Document,
-    action: "commit" | "undo" | "redo" = "commit",
+  async function transact(
+    candidate: CadDocument,
+    mode: "commit" | "undo" | "redo" = "commit",
   ) {
-    if (lock.current) return;
-    lock.current = true;
-    setBusy(true);
+    if (working.current) return;
+    working.current = true;
+    const token = ++generation.current;
+    setBusy("Regenerating geometry…");
     setError("");
-    const seq = ++sequence.current;
+    setPreview(null);
     try {
-      const candidate = validateDocument({
-        ...next,
-        revision: history.current.current.revision + 1,
-      });
-      const response = await client.current!.request({
-        type: "regenerate",
-        document: candidate,
-        revision: candidate.revision,
-      });
-      if (
-        seq !== sequence.current ||
-        !response.ok ||
-        response.type !== "regenerate" ||
-        response.revision !== candidate.revision
-      )
-        return;
-      const committed =
-        action === "undo"
-          ? history.current.undo()
-          : action === "redo"
-            ? history.current.redo()
-            : history.current.commit(candidate);
-      setDoc(committed);
-      setModel(response.result);
-      persist(committed);
-      setTool(null);
-      setEditing(null);
+      const next = history.current.candidate(candidate),
+        result = await kernel.current!.regenerate(next);
+      if (token !== generation.current) return;
+      if (mode === "undo") history.current.acceptUndo(next);
+      else if (mode === "redo") history.current.acceptRedo(next);
+      else history.current.commit(next);
+      setDoc(next);
+      setModel(result);
+      setDraft(null);
+      setHistoryVersion((v) => v + 1);
+      setReady(true);
+      void save(next);
     } catch (e) {
-      if (seq === sequence.current) setError((e as Error).message);
+      if (token === generation.current)
+        setError(e instanceof Error ? e.message : "Operation failed.");
     } finally {
-      if (seq === sequence.current) {
-        setBusy(false);
-        lock.current = false;
+      if (token === generation.current) {
+        working.current = false;
+        setBusy("");
       }
     }
   }
-  function navigateHistory(action: "undo" | "redo") {
-    const next =
-      action === "undo"
-        ? history.current.peekUndo()
-        : history.current.peekRedo();
-    if (next) void apply(next, action);
+  async function restart() {
+    const token = ++generation.current;
+    kernel.current!.reset();
+    working.current = true;
+    setBusy("Restoring committed geometry…");
+    setPreview(null);
+    setError("");
+    try {
+      const result = await kernel.current!.regenerate(history.current.current);
+      if (token === generation.current) {
+        setModel(result);
+        setReady(true);
+      }
+    } catch (e) {
+      if (token === generation.current)
+        setError(e instanceof Error ? e.message : "Worker recovery failed.");
+    } finally {
+      if (token === generation.current) {
+        working.current = false;
+        setBusy("");
+      }
+    }
   }
-  useEffect(() => {
-    const key = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
-        event.preventDefault();
-        saveProject();
-        return;
+  async function previewDraft() {
+    if (!draft || working.current) return;
+    working.current = true;
+    setBusy("Calculating preview…");
+    setError("");
+    const token = ++generation.current;
+    try {
+      const candidate = history.current.candidate(replaceFeature(doc, draft));
+      const result = await kernel.current!.request<ModelResult>(
+        { kind: "preview", document: candidate },
+        candidate.revision,
+      );
+      if (token === generation.current)
+        setPreview({ doc: candidate, model: result });
+    } catch (e) {
+      if (token === generation.current)
+        setError(e instanceof Error ? e.message : "Preview failed.");
+    } finally {
+      if (token === generation.current) {
+        working.current = false;
+        setBusy("");
       }
-      if (event.key === "Escape") {
-        event.preventDefault();
-        if (lock.current && hydrated) cancel();
-        setTool(null);
-        setEditing(null);
-        setSelected(null);
-        return;
-      }
-      if ((event.target as HTMLElement).matches("input,select,textarea"))
-        return;
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z") {
-        event.preventDefault();
-        navigateHistory(event.shiftKey ? "redo" : "undo");
-      }
-    };
-    window.addEventListener("keydown", key);
-    return () => window.removeEventListener("keydown", key);
-  });
-  function saveProject() {
-    if (!hydrated) return;
+    }
+  }
+  function applyDraft() {
+    if (!draft) return;
+    try {
+      void transact(replaceFeature(doc, draft));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Invalid feature.");
+    }
+  }
+  function begin(type: Feature["type"]) {
+    setPreview(null);
+    setError("");
+    setDraft(newFeature(type, doc, selected, model));
+    setDrawer(false);
+  }
+  function undo() {
+    const next = history.current.undoCandidate();
+    if (next) void transact(next, "undo");
+  }
+  function redo() {
+    const next = history.current.redoCandidate();
+    if (next) void transact(next, "redo");
+  }
+  function saveDownload() {
     try {
       download(
         encodeProject(history.current.current),
-        `${filename(history.current.current.name)}.notcad`,
-        "application/zip",
+        `${history.current.current.name.replace(/[^a-zA-Z0-9 _-]/g, "_")}.notcad`,
       );
     } catch (e) {
-      setError((e as Error).message);
+      setError(String(e));
     }
   }
+  const shortcuts = useRef({ undo, redo, saveDownload });
+  shortcuts.current = { undo, redo, saveDownload };
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        shortcuts.current.saveDownload();
+        return;
+      }
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement ||
+        e.target instanceof HTMLSelectElement
+      )
+        return;
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
+        e.preventDefault();
+        if (e.shiftKey) shortcuts.current.redo();
+        else shortcuts.current.undo();
+      }
+      if (e.key === "Escape" && !working.current) {
+        setDraft(null);
+        setPreview(null);
+        setDrawer(false);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
   async function openProject(file?: File) {
-    if (!file) return;
+    if (!file || working.current) return;
     try {
-      if (file.size > MAX_ARCHIVE_BYTES)
-        throw new Error("Project exceeds the 8 MiB archive limit");
-      const next = decodeProject(new Uint8Array(await file.arrayBuffer()));
-      await apply(next);
+      if (file.size > 16 * 1024 * 1024)
+        throw new Error("Project exceeds the 16 MiB limit of this build.");
+      const opened = decodeProject(new Uint8Array(await file.arrayBuffer()));
+      await transact(opened);
       setSelected(null);
     } catch (e) {
-      setError((e as Error).message);
+      setError(e instanceof Error ? e.message : "Unable to open project.");
     } finally {
       if (fileInput.current) fileInput.current.value = "";
     }
   }
-  async function exportPart(format: "step" | "stl") {
-    if (lock.current) return;
-    lock.current = true;
-    setBusy(true);
+  async function exportGeometry(format: "step" | "stl") {
+    if (working.current) return;
+    working.current = true;
+    setBusy(`Exporting ${format.toUpperCase()}…`);
     setError("");
-    const seq = ++sequence.current;
+    setExportOpen(false);
+    const token = ++generation.current;
     try {
-      const response = await client.current!.request({
-        type: "export",
-        format,
-        document: doc,
-        revision: doc.revision,
-      });
-      if (seq === sequence.current && response.ok && response.type === "export")
-        download(
-          response.bytes,
-          `${filename(doc.name)}.${format}`,
-          "application/octet-stream",
-        );
+      const blob = await kernel.current!.request<Blob>(
+        { kind: "export", format },
+        doc.revision,
+      );
+      if (token === generation.current) download(blob, `${doc.name}.${format}`);
     } catch (e) {
-      if (seq === sequence.current) setError((e as Error).message);
+      if (token === generation.current)
+        setError(e instanceof Error ? e.message : "Export failed.");
     } finally {
-      if (seq === sequence.current) {
-        lock.current = false;
-        setBusy(false);
+      if (token === generation.current) {
+        working.current = false;
+        setBusy("");
       }
     }
   }
-  function cancel() {
-    if (!hydrated) return;
-    ++sequence.current;
-    client.current!.cancel();
-    lock.current = false;
-    setBusy(false);
-    setError("Operation cancelled. Your last committed project is preserved.");
+  const currentFeature = doc.features.find((f) => f.id === selected),
+    currentPart = model.parts.find((p) => p.id === selected);
+  const active = doc.rollback ?? doc.features.length;
+  const selectedReport = selected ? model.sketches[selected] : undefined;
+  const units = doc.units,
+    scale = units === "in" ? 25.4 : 1;
+  function changeFeature(f: Feature) {
+    try {
+      void transact(replaceFeature(doc, f));
+    } catch (e) {
+      setError(String(e));
+    }
   }
-  function start(next: Tool) {
-    setDrawer(false);
-    setEditing(null);
-    setTool(next);
+  function move(delta: number) {
+    if (!selected) return;
+    try {
+      void transact(moveFeature(doc, selected, delta));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Cannot reorder feature.");
+    }
   }
-  const active = editing ?? doc.features.find((f) => f.id === selected);
-  const factor = doc.units === "in" ? 25.4 : 1;
-  const totalVolume =
-    model.parts.reduce((sum, p) => sum + p.volume, 0) / factor ** 3;
   return (
-    <div className="app">
-      <header className="header">
-        <a className="brand" href="#/">
+    <div className="app-shell">
+      <header className="topbar">
+        <a href="#/studio" className="brand" aria-label="notCAD home">
+          <span className="brand-symbol">
+            n<span>↗</span>
+          </span>
           not<span>CAD</span>
-          <i>local workshop</i>
         </a>
         <div className="document-title">
           <input
-            aria-label="Project name"
+            aria-label="Document name"
             key={doc.name}
             defaultValue={doc.name}
+            disabled={!!busy || !ready}
             maxLength={120}
-            disabled={busy}
             onBlur={(e) => {
-              const name = e.currentTarget.value.trim();
-              e.currentTarget.value = name || doc.name;
-              if (name && name !== doc.name) void apply(revise(doc, { name }));
+              const name = e.target.value.trim();
+              if (name && name !== doc.name) void transact({ ...doc, name });
+              else e.target.value = doc.name;
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") e.currentTarget.blur();
             }}
           />
-          <span>Private on your device</span>
+          <span className="local-tag">
+            <i /> PRIVATE · ON YOUR DEVICE
+          </span>
         </div>
         <div className="file-actions">
-          <button disabled={busy} onClick={() => fileInput.current?.click()}>
+          <button
+            disabled={!!busy || !ready}
+            onClick={() => fileInput.current?.click()}
+          >
             Open
           </button>
-          <button
-            className="primary"
-            onClick={saveProject}
-            disabled={!hydrated}
-          >
-            Download project
+          <button onClick={saveDownload} className="save-button">
+            ↓ <span>Save project</span>
           </button>
+          <div className="export-wrap">
+            <button
+              disabled={!!busy || !ready || !model.parts.length}
+              onClick={() => setExportOpen(!exportOpen)}
+            >
+              Export <span>⌄</span>
+            </button>
+            {exportOpen && (
+              <div className="export-menu">
+                <button onClick={() => void exportGeometry("step")}>
+                  STEP · exact solids
+                </button>
+                <button onClick={() => void exportGeometry("stl")}>
+                  STL · triangle mesh
+                </button>
+              </div>
+            )}
+          </div>
         </div>
         <input
           ref={fileInput}
           type="file"
           accept=".notcad"
+          aria-label="Open notCAD project"
           hidden
           onChange={(e) => void openProject(e.target.files?.[0])}
         />
       </header>
       <nav className="toolbar" aria-label="Modeling tools">
         <button
-          className="mobile-tree"
-          disabled={busy}
-          onClick={() => {
-            setDrawer(!drawer);
-            setInspectOpen(false);
-            setTool(null);
-            setEditing(null);
-          }}
+          className="mobile-history"
+          onClick={() => setDrawer(!drawer)}
+          aria-expanded={drawer}
         >
-          Features
+          ☰ History
         </button>
-        <div className="tool-group">
-          <button disabled={busy} onClick={() => start("rectangle")}>
-            ▱ Rectangle
-          </button>
-          <button disabled={busy} onClick={() => start("circle")}>
-            ○ Circle
-          </button>
-        </div>
-        <div className="tool-group">
+        <div className="undo-tools">
           <button
-            disabled={busy || !doc.features.some((f) => f.type === "sketch")}
-            onClick={() => start("extrude")}
-          >
-            ↗ Extrude
-          </button>
-          <button
-            disabled={busy || !doc.features.some((f) => f.type === "sketch")}
-            onClick={() => start("revolve")}
-          >
-            ⟳ Revolve
-          </button>
-        </div>
-        <div className="tool-group">
-          <button
-            disabled={busy || !model.parts.length}
-            onClick={() => start("fillet")}
-          >
-            ⌒ Fillet
-          </button>
-          <button
-            disabled={busy || !model.parts.length}
-            onClick={() => start("chamfer")}
-          >
-            ◩ Chamfer
-          </button>
-        </div>
-        <button
-          className="mobile-tree"
-          disabled={busy}
-          onClick={() => {
-            setDrawer(false);
-            setTool(null);
-            setEditing(null);
-            setInspectOpen(!inspectOpen);
-          }}
-        >
-          Inspect / Export
-        </button>
-        <div className="toolbar-end">
-          <button
-            disabled={busy || !history.current.canUndo}
-            onClick={() => navigateHistory("undo")}
+            title="Undo (Ctrl+Z)"
             aria-label="Undo"
+            disabled={!!busy || !history.current.canUndo}
+            onClick={undo}
           >
             ↶
           </button>
           <button
-            disabled={busy || !history.current.canRedo}
-            onClick={() => navigateHistory("redo")}
+            title="Redo (Ctrl+Shift+Z)"
             aria-label="Redo"
+            disabled={!!busy || !history.current.canRedo}
+            onClick={redo}
           >
             ↷
           </button>
-          <button onClick={() => setView((v) => v + 1)}>Fit view</button>
         </div>
+        <span className="divider" />
+        {(
+          [
+            "sketch",
+            "extrude",
+            "revolve",
+            "fillet",
+            "chamfer",
+          ] as Feature["type"][]
+        ).map((type) => (
+          <button
+            key={type}
+            aria-label={type[0].toUpperCase() + type.slice(1)}
+            disabled={
+              !!busy ||
+              !ready ||
+              (type === "extrude" || type === "revolve"
+                ? !doc.features.some(
+                    (f) => f.type === "sketch" && !f.suppressed,
+                  )
+                : type !== "sketch" && !model.parts.length)
+            }
+            onClick={() => begin(type)}
+            className={draft?.type === type ? "tool-active" : ""}
+          >
+            <span className="tool-icon">{icons[type]}</span>
+            {type[0].toUpperCase() + type.slice(1)}
+          </button>
+        ))}
+        <span className="toolbar-end">
+          ENGINEERING BUILD <span>0.1</span>
+        </span>
       </nav>
       {error && (
-        <div className="error" role="alert">
-          {error}
+        <div className="error-banner" role="alert">
+          <span>{error}</span>
+          <button onClick={saveDownload}>Download recovery copy</button>
+          <button onClick={() => void restart()}>Restart geometry</button>
           <button onClick={() => setError("")} aria-label="Dismiss error">
             ×
           </button>
         </div>
       )}
-      <div className="workspace">
-        <aside className={`feature-tree ${drawer ? "open" : ""}`}>
-          <div className="panel-heading">
-            FEATURES <span>{doc.features.length}</span>
+      <main className="workspace">
+        <aside
+          className={`feature-panel ${drawer ? "drawer-open" : ""}`}
+          aria-label="Feature history"
+        >
+          <div className="studio-heading">
+            <span className="studio-icon">▧</span>
+            <div>
+              <strong>Part Studio 1</strong>
+              <span>Parametric workspace</span>
+            </div>
+            <button
+              className="mobile-history icon-button"
+              onClick={() => setDrawer(false)}
+              aria-label="Close history"
+            >
+              ×
+            </button>
           </div>
-          <div className="origin">
-            <span>⌖ Origin</span>
-            <span>XY · XZ · YZ</span>
+          <div className="section-label">REFERENCE GEOMETRY</div>
+          <div className="reference-item">
+            <span>⊕</span> Origin <small>0, 0, 0</small>
           </div>
-          <div className="features">
-            {doc.features.map((feature, index) => (
+          <div className="planes">
+            <span>▱ Top</span>
+            <span>▱ Front</span>
+            <span>▱ Right</span>
+          </div>
+          <div className="section-label feature-heading">
+            FEATURES{" "}
+            <span>{doc.features.length.toString().padStart(2, "0")}</span>
+          </div>
+          <ol className="feature-list">
+            {doc.features.map((f, index) => (
+              <li
+                key={f.id}
+                className={`${selected === f.id ? "selected" : ""} ${f.suppressed || index >= active ? "suppressed" : ""}`}
+              >
+                <button
+                  disabled={!!busy}
+                  aria-pressed={selected === f.id}
+                  onClick={() => setSelected(f.id)}
+                  onDoubleClick={() => {
+                    setDraft(structuredClone(f));
+                    setPreview(null);
+                    setDrawer(false);
+                  }}
+                >
+                  <span className="feature-number">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className="feature-icon">{icons[f.type]}</span>
+                  <span>{f.name}</span>
+                  {f.suppressed && <small>off</small>}
+                </button>
+              </li>
+            ))}
+          </ol>
+          {!doc.features.length && (
+            <p className="history-empty">
+              Your design starts with a sketch.
+              <br />
+              Every feature will appear here.
+            </p>
+          )}
+          {currentFeature && (
+            <div className="feature-actions">
               <button
-                key={feature.id}
-                disabled={busy}
-                className={`feature ${feature.id === selected ? "selected" : ""} ${feature.suppressed || (doc.rollback !== null && index >= doc.rollback) ? "suppressed" : ""}`}
+                disabled={!!busy}
                 onClick={() => {
-                  setSelected(feature.id);
-                  setEditing(feature);
-                  setTool(null);
+                  setDraft(structuredClone(currentFeature));
+                  setPreview(null);
                   setDrawer(false);
                 }}
               >
-                <span className="feature-icon">
-                  {feature.type === "sketch"
-                    ? "▱"
-                    : feature.type === "extrude"
-                      ? "↗"
-                      : feature.type === "revolve"
-                        ? "⟳"
-                        : "⌒"}
-                </span>
-                <span>
-                  {feature.name}
-                  <small>
-                    {feature.type}
-                    {feature.suppressed ? " · suppressed" : ""}
-                  </small>
-                </span>
+                Edit
+              </button>
+              <button
+                disabled={!!busy}
+                onClick={() =>
+                  changeFeature({
+                    ...currentFeature,
+                    suppressed: !currentFeature.suppressed,
+                  })
+                }
+              >
+                {currentFeature.suppressed ? "Unsuppress" : "Suppress"}
+              </button>
+              <button
+                aria-label="Move feature earlier"
+                disabled={!!busy}
+                onClick={() => move(-1)}
+              >
+                ↑
+              </button>
+              <button
+                aria-label="Move feature later"
+                disabled={!!busy}
+                onClick={() => move(1)}
+              >
+                ↓
+              </button>
+              <button
+                disabled={!!busy}
+                onClick={() => {
+                  try {
+                    void transact(
+                      parseDocument({
+                        ...doc,
+                        features: doc.features.filter((f) => f.id !== selected),
+                        rollback: null,
+                      }),
+                    );
+                    setSelected(null);
+                  } catch (e) {
+                    setError(String(e));
+                  }
+                }}
+              >
+                Delete
+              </button>
+            </div>
+          )}
+          {!!doc.features.length && (
+            <label className="rollback">
+              History position{" "}
+              <select
+                aria-label="History position"
+                disabled={!!busy}
+                value={doc.rollback ?? "end"}
+                onChange={(e) =>
+                  void transact({
+                    ...doc,
+                    rollback:
+                      e.target.value === "end" ? null : Number(e.target.value),
+                  })
+                }
+              >
+                <option value="end">End of history</option>
+                {doc.features.map((f, i) => (
+                  <option key={f.id} value={i}>
+                    Before {f.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+          <div className="parts-section">
+            <div className="section-label">
+              PARTS{" "}
+              <span>{model.parts.length.toString().padStart(2, "0")}</span>
+            </div>
+            {model.parts.map((p) => (
+              <button
+                key={p.id}
+                className={`part-item ${selected === p.id ? "selected" : ""}`}
+                onClick={() => setSelected(p.id)}
+              >
+                <span className="part-swatch" />
+                {p.name}
+                <small>{p.valid ? "solid" : ""}</small>
               </button>
             ))}
           </div>
-          <label className="rollback">
-            History position
-            <select
-              aria-label="History position"
-              value={doc.rollback ?? doc.features.length}
-              disabled={busy}
-              onChange={(e) =>
-                void apply(
-                  revise(doc, {
-                    rollback:
-                      Number(e.target.value) === doc.features.length
-                        ? null
-                        : Number(e.target.value),
-                  }),
-                )
-              }
-            >
-              {Array.from({ length: doc.features.length + 1 }, (_, i) => (
-                <option key={i} value={i}>
-                  {i === doc.features.length
-                    ? "End of history"
-                    : `After ${i} features`}
-                </option>
-              ))}
-            </select>
-          </label>
-          <div className="parts-heading">
-            PARTS <span>{model.parts.length}</span>
+          <div className="local-note">
+            <span>◉</span>
+            <div>
+              Your ideas stay here.
+              <small>Local storage · No account · No telemetry</small>
+            </div>
           </div>
-          {model.parts.map((part) => (
-            <button
-              key={part.id}
-              className={`part ${selected === part.id ? "selected" : ""}`}
-              onClick={() => {
-                setSelected(part.id);
-                setDrawer(false);
-                setEditing(null);
-                setTool(null);
-              }}
-            >
-              ◇ {part.name}
-            </button>
-          ))}
-          <div className="tree-footer">Exact geometry · millimeter model</div>
         </aside>
-        <main className="canvas-region">
-          <Viewport
-            doc={doc}
-            model={model}
-            selected={selected}
-            onSelect={(id) => {
-              setSelected(id);
-              setDrawer(false);
-              setTool(null);
-              setEditing(null);
-            }}
-            view={view}
+        {drawer && (
+          <button
+            className="drawer-scrim"
+            aria-label="Dismiss history drawer"
+            onClick={() => setDrawer(false)}
           />
-          {!doc.features.length && !busy && (
-            <div className="welcome">
-              <span className="eyebrow">A WORKSPACE OF YOUR OWN</span>
+        )}
+        <section className="canvas-area" aria-label="Design workspace">
+          <Viewport
+            model={preview?.model ?? model}
+            document={preview?.doc ?? doc}
+            selected={selected}
+            onSelect={setSelected}
+            preview={!!preview}
+          />
+          {!doc.features.length && !draft && !busy && (
+            <div className="empty-state">
+              <span className="eyebrow">A SPACE TO MAKE THINGS</span>
               <h1>
-                Make something
+                From a thought
                 <br />
-                that fits.
+                to a solid.
               </h1>
               <p>
-                Start with a precise sketch, then turn it into a solid. Your
-                work stays on this device.
+                Sketch with precise dimensions.
+                <br />
+                Build, refine, and keep every idea on your device.
               </p>
-              <button className="primary" onClick={() => start("rectangle")}>
-                Create a rectangle sketch
+              <button className="primary" onClick={() => begin("sketch")}>
+                ＋ Create your first sketch
               </button>
               <button
                 className="text-button"
-                onClick={() => void apply(bracketDocument())}
+                onClick={() => void transact(bracketDocument())}
               >
-                Explore a mechanical bracket ↗
+                Explore the mounting bracket ↗
               </button>
             </div>
           )}
           {busy && (
-            <div className="working" role="status">
+            <div className="busy-pill" role="status">
               <span className="spinner" />
-              Solving geometry…
-              <button onClick={cancel} disabled={!hydrated}>
-                Cancel
-              </button>
+              {busy}
+              {ready && <button onClick={() => void restart()}>Cancel</button>}
             </div>
           )}
-        </main>
-        <aside
-          className={`operation-panel ${tool || editing ? "editing" : inspectOpen ? "inspect-open" : ""}`}
-        >
-          {tool || editing ? (
-            <FeatureForm
-              key={editing?.id ?? tool}
-              doc={doc}
-              tool={tool}
-              editing={editing}
-              selected={selected}
-              busy={busy}
-              onHistoryEdit={(action, featureId) => {
-                try {
-                  void apply(
-                    action === "delete"
-                      ? removeFeature(doc, featureId)
-                      : moveFeature(doc, featureId, action === "up" ? -1 : 1),
-                  );
-                } catch (e) {
-                  setError((e as Error).message);
-                }
-              }}
-              onCancel={() => {
-                if (lock.current) cancel();
-                setTool(null);
-                setEditing(null);
-              }}
-              onSubmit={(feature) => {
-                const features = editing
-                  ? doc.features.map((f) => (f.id === feature.id ? feature : f))
-                  : [...doc.features, feature];
-                void apply(revise(doc, { features, rollback: null }));
-              }}
-            />
-          ) : (
-            <>
-              <div className="panel-heading">INSPECT</div>
-              <div className="inspect">
-                <span className="eyebrow">
-                  {model.parts.length ? "MODEL PROPERTIES" : "GETTING STARTED"}
-                </span>
-                <h2>
-                  {model.parts.length
-                    ? `${model.parts.length} solid part${model.parts.length > 1 ? "s" : ""}`
-                    : "Sketch. Shape. Refine."}
-                </h2>
-                <p>
-                  {model.parts.length
-                    ? "Select a feature to edit its dimensions. Changes rebuild the dependent geometry."
-                    : "Rectangle and circle sketches are dimension driven and anchored to the selected plane."}
-                </p>
-                {model.parts.length > 0 && (
-                  <dl>
-                    <dt>Total volume</dt>
-                    <dd data-testid="volume">
-                      {formatMeasurement(totalVolume, 3)} {doc.units}³
-                    </dd>
-                    <dt>Surface area</dt>
-                    <dd>
-                      {formatMeasurement(
-                        model.parts.reduce((sum, p) => sum + p.area, 0) /
-                          factor ** 2,
-                        2,
-                      )}{" "}
-                      {doc.units}²
-                    </dd>
-                    <dt>Geometry</dt>
-                    <dd>Valid closed solids</dd>
-                  </dl>
-                )}
-                {active?.type === "sketch" && (
-                  <p>
-                    {model.diagnostics.find((d) => d.featureId === active.id)
-                      ?.dof ?? "—"}{" "}
-                    degrees of freedom
-                  </p>
-                )}
-                <label>
-                  Display units
-                  <select
-                    aria-label="Display units"
-                    value={doc.units}
-                    disabled={busy}
-                    onChange={(e) =>
-                      void apply(
-                        revise(doc, {
-                          units: e.target.value as Document["units"],
-                        }),
-                      )
-                    }
-                  >
-                    <option value="mm">Millimeters</option>
-                    <option value="in">Inches</option>
-                  </select>
-                </label>
-                <div className="export-actions">
-                  <button
-                    disabled={busy || !model.parts.length}
-                    onClick={() => void exportPart("step")}
-                  >
-                    Export STEP
-                  </button>
-                  <button
-                    disabled={busy || !model.parts.length}
-                    onClick={() => void exportPart("stl")}
-                  >
-                    Export STL
-                  </button>
-                </div>
-                <button
-                  disabled={busy}
-                  className="text-button"
-                  onClick={async () => {
-                    try {
-                      const previous = await loadLocal("previous");
-                      if (previous) await apply(previous);
-                      else
-                        setError("No previous recovery snapshot is available.");
-                    } catch (e) {
-                      setError((e as Error).message);
-                    }
-                  }}
-                >
-                  Restore previous snapshot
-                </button>
-                <p className="milestone-note">
-                  Early local build. Full CAD parity is in progress; this
-                  application is an unfinished public preview.
-                </p>
-              </div>
-            </>
+          {!draft && (currentPart || selectedReport) && (
+            <div className="selection-card">
+              <span className="eyebrow">
+                {currentPart ? "PART PROPERTIES" : "SKETCH CONSTRAINTS"}
+              </span>
+              <strong>{currentPart?.name ?? currentFeature?.name}</strong>
+              {currentPart ? (
+                <>
+                  <div>
+                    Volume{" "}
+                    <span data-testid="volume">
+                      {(currentPart.volume / scale ** 3).toLocaleString("en", {
+                        maximumFractionDigits: 3,
+                      })}{" "}
+                      {units}³
+                    </span>
+                  </div>
+                  <div>
+                    Surface area{" "}
+                    <span>
+                      {(currentPart.area / scale ** 2).toLocaleString("en", {
+                        maximumFractionDigits: 3,
+                      })}{" "}
+                      {units}²
+                    </span>
+                  </div>
+                  <div>
+                    Topology{" "}
+                    <span>
+                      {currentPart.solids} solid · {currentPart.faces} faces
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div>
+                    Constraint status <span>{selectedReport?.status}</span>
+                  </div>
+                  <div>
+                    Degrees of freedom <span>{selectedReport?.dof}</span>
+                  </div>
+                </>
+              )}
+            </div>
           )}
-        </aside>
-      </div>
-      <footer className="footer">
-        <span
-          className={
-            storage.startsWith("Local save failed") ||
-            storage.startsWith("Recovery unavailable")
-              ? "storage-error"
-              : ""
-          }
-        >
-          ● {storage}
-        </span>
-        <span>
-          {busy ? "Computing" : "Ready"} · {doc.units} · Rev {doc.revision}
-        </span>
+        </section>
+        {draft && (
+          <FeatureEditor
+            feature={draft}
+            document={doc}
+            model={model}
+            busy={!!busy}
+            onChange={(f) => {
+              setDraft(f);
+              setPreview(null);
+            }}
+            onPreview={() => void previewDraft()}
+            onApply={applyDraft}
+            onCancel={() => {
+              setDraft(null);
+              setPreview(null);
+            }}
+          />
+        )}
+      </main>
+      <footer className="bottom-bar">
+        <div className="document-tabs">
+          <span className="active-tab">▧ Part Studio 1</span>
+          <button
+            disabled={!!busy || !ready}
+            onClick={() => {
+              setSelected(null);
+              void transact(emptyDocument());
+            }}
+            title="Create a new project; current document remains in undo history"
+          >
+            ＋ New project
+          </button>
+        </div>
+        <div className="status-area">
+          <span
+            className={
+              saved.includes("failed") || saved.includes("unavailable")
+                ? "save-failed"
+                : "save-state"
+            }
+            data-testid="save-status"
+          >
+            {saved}
+          </span>
+          <label className="units-control">
+            <span className="sr-only">Document units</span>
+            <select
+              aria-label="Document units"
+              value={units}
+              disabled={!!busy || !ready}
+              onChange={(e) =>
+                void transact({ ...doc, units: e.target.value as "mm" | "in" })
+              }
+            >
+              <option value="mm">mm</option>
+              <option value="in">in</option>
+            </select>
+          </label>
+          <span className="revision">r{doc.revision}</span>
+        </div>
       </footer>
-      <div className="tabs">
-        <button className="active">▱ Part Studio 1</button>
-        <span>Local project · no account required</span>
-      </div>
     </div>
   );
 }
-interface FormProps {
-  doc: Document;
-  tool: Tool | null;
-  editing: Feature | null;
-  selected: string | null;
-  busy: boolean;
-  onCancel(): void;
-  onHistoryEdit(action: "up" | "down" | "delete", featureId: string): void;
-  onSubmit(feature: Feature): void;
-}
-function FeatureForm({
-  doc,
-  tool,
-  editing,
-  selected,
-  busy,
-  onCancel,
-  onSubmit,
-  onHistoryEdit,
-}: FormProps) {
-  const kind =
-    editing?.type === "sketch"
-      ? editing.profile.kind
-      : (editing?.type ?? tool!);
-  const factor = doc.units === "in" ? 25.4 : 1;
-  const sketches = doc.features.filter(
-    (f): f is Sketch =>
-      f.type === "sketch" &&
-      (!f.suppressed ||
-        (editing !== null &&
-          "sketchId" in editing &&
-          editing.sketchId === f.id)) &&
-      (!editing || doc.features.indexOf(f) < doc.features.indexOf(editing)),
-  );
-  const parts = doc.features.filter(
-    (f) =>
-      "operation" in f &&
-      f.operation === "new" &&
-      (!editing || doc.features.indexOf(f) < doc.features.indexOf(editing)),
-  );
-  const profile = editing?.type === "sketch" ? editing.profile : null;
-  const [operation, setOperation] = useState(
-    editing && "operation" in editing ? editing.operation : "new",
-  );
-  const [formError, setFormError] = useState("");
-  const numeric = (
-    name: string,
-    label: string,
-    value: number,
-    positive = false,
-    angle = false,
-  ) => (
-    <label>
-      {label}
-      {!angle && <span>{doc.units}</span>}
-      <input
-        name={name}
-        type="number"
-        step="any"
-        required
-        min={positive ? (angle ? 0.1 : 0.001 / factor) : -10000 / factor}
-        max={angle ? 360 : 10000 / factor}
-        defaultValue={angle ? value : value / factor}
-      />
-    </label>
-  );
-  return (
-    <form
-      onSubmit={(event) => {
-        event.preventDefault();
-        setFormError("");
-        try {
-          const data = new FormData(event.currentTarget),
-            n = (name: string) => Number(data.get(name)) * factor;
-          const common = {
-            id: editing?.id ?? crypto.randomUUID(),
-            name: String(data.get("name")).trim(),
-            suppressed: editing?.suppressed ?? false,
-          };
-          let feature: Feature;
-          if (kind === "rectangle" || kind === "circle") {
-            feature = {
-              ...common,
-              type: "sketch",
-              plane: String(data.get("plane")) as Sketch["plane"],
-              offset: n("offset"),
-              profile:
-                kind === "rectangle"
-                  ? {
-                      kind,
-                      x: n("x"),
-                      y: n("y"),
-                      width: n("width"),
-                      height: n("height"),
-                    }
-                  : { kind, x: n("x"), y: n("y"), radius: n("radius") },
-            };
-          } else if (kind === "extrude" || kind === "revolve") {
-            const base = {
-              ...common,
-              sketchId: String(data.get("sketchId")),
-              operation,
-              targetId:
-                operation === "new" ? null : String(data.get("targetId")),
-            };
-            feature =
-              kind === "extrude"
-                ? { ...base, type: kind, depth: n("depth") }
-                : { ...base, type: kind, angle: Number(data.get("angle")) };
-          } else
-            feature = {
-              ...common,
-              type: kind,
-              targetId: String(data.get("targetId")),
-              radius: n("radius"),
-            };
-          onSubmit(feature);
-        } catch (e) {
-          setFormError((e as Error).message);
-        }
-      }}
-    >
-      <div className="panel-heading">
-        {editing ? "EDIT" : "CREATE"} {kind.toUpperCase()}
-        <button type="button" onClick={onCancel} aria-label="Close operation">
-          ×
-        </button>
-      </div>
-      <div className="form-body">
-        <label>
-          Name
-          <input
-            name="name"
-            required
-            maxLength={120}
-            defaultValue={
-              editing?.name ??
-              `${kind[0].toUpperCase()}${kind.slice(1)} ${doc.features.length + 1}`
-            }
-          />
-        </label>
-        {(kind === "rectangle" || kind === "circle") && (
-          <>
-            <label>
-              Sketch plane
-              <select
-                name="plane"
-                defaultValue={editing?.type === "sketch" ? editing.plane : "XY"}
-              >
-                <option>XY</option>
-                <option>XZ</option>
-                <option>YZ</option>
-              </select>
-            </label>
-            {numeric(
-              "offset",
-              "Plane offset",
-              editing?.type === "sketch" ? editing.offset : 0,
-            )}
-            <div className="field-pair">
-              {numeric(
-                "x",
-                kind === "circle" ? "Center U" : "Origin U",
-                profile?.x ?? 0,
-              )}
-              {numeric(
-                "y",
-                kind === "circle" ? "Center V" : "Origin V",
-                profile?.y ?? 0,
-              )}
-            </div>
-            {kind === "rectangle" ? (
-              <>
-                {numeric(
-                  "width",
-                  "Width",
-                  profile?.kind === "rectangle" ? profile.width : 60,
-                  true,
-                )}
-                {numeric(
-                  "height",
-                  "Height",
-                  profile?.kind === "rectangle" ? profile.height : 40,
-                  true,
-                )}
-              </>
-            ) : (
-              numeric(
-                "radius",
-                "Radius",
-                profile?.kind === "circle" ? profile.radius : 4,
-                true,
-              )
-            )}
-            <p className="form-help">
-              Local U/V coordinates on the sketch plane. Dimensions and the
-              anchored origin fully constrain this profile.
-            </p>
-          </>
-        )}
-        {(kind === "extrude" || kind === "revolve") && (
-          <>
-            <label>
-              Profile
-              <select
-                name="sketchId"
-                required
-                defaultValue={
-                  editing && "sketchId" in editing
-                    ? editing.sketchId
-                    : (sketches.find((s) => s.id === selected)?.id ??
-                      sketches.at(-1)?.id)
-                }
-              >
-                <option value="" disabled>
-                  Select a sketch
-                </option>
-                {sketches.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
-                    {s.suppressed ? " · suppressed" : ""}
-                  </option>
-                ))}
-              </select>
-            </label>
-            {kind === "extrude"
-              ? numeric(
-                  "depth",
-                  "Depth",
-                  editing?.type === "extrude" ? editing.depth : 6,
-                  true,
-                )
-              : numeric(
-                  "angle",
-                  "Angle (degrees)",
-                  editing?.type === "revolve" ? editing.angle : 360,
-                  true,
-                  true,
-                )}
-            <label>
-              Operation
-              <select
-                value={operation}
-                onChange={(e) =>
-                  setOperation(e.target.value as typeof operation)
-                }
-              >
-                <option value="new">New part</option>
-                <option value="add">Add to part</option>
-                <option value="remove">Remove from part</option>
-                <option value="intersect">Intersect part</option>
-              </select>
-            </label>
-            {operation !== "new" && (
-              <label>
-                Target part
-                <select
-                  name="targetId"
-                  required
-                  defaultValue={
-                    editing && "targetId" in editing
-                      ? (editing.targetId ?? "")
-                      : parts[0]?.id
-                  }
-                >
-                  {parts.map((p) => (
-                    <option value={p.id} key={p.id}>
-                      {p.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            )}
-            <p className="form-help">
-              {kind === "extrude"
-                ? "Extrudes along the positive plane normal: XY → +Z, XZ → −Y, YZ → +X."
-                : "Revolves about the local V axis through U = 0. Place the profile on one side of the axis."}
-            </p>
-          </>
-        )}
-        {(kind === "fillet" || kind === "chamfer") && (
-          <>
-            <label>
-              Target part
-              <select
-                name="targetId"
-                required
-                defaultValue={
-                  editing && "targetId" in editing
-                    ? (editing.targetId ?? "")
-                    : parts[0]?.id
-                }
-              >
-                {parts.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            {numeric(
-              "radius",
-              kind === "fillet" ? "Radius" : "Distance",
-              editing && "radius" in editing ? editing.radius : 1,
-              true,
-            )}
-            <p className="form-help">
-              Applies to all edges of the target part. Choose a small size;
-              invalid operations preserve your project.
-            </p>
-          </>
-        )}
-        {formError && <p role="alert">{formError}</p>}
-        <div className="form-actions">
-          <button type="submit" className="primary" disabled={busy}>
-            Apply {kind}
-          </button>
-          <button type="button" onClick={onCancel}>
-            Cancel
-          </button>
-        </div>
-        {editing && (
-          <>
-            <button
-              className="text-button"
-              type="button"
-              disabled={busy}
-              onClick={() =>
-                onSubmit({ ...editing, suppressed: !editing.suppressed })
-              }
-            >
-              {editing.suppressed ? "Unsuppress feature" : "Suppress feature"}
-            </button>
-            <p className="form-help">
-              Required dependencies must remain available for later features.
-            </p>
-            <div className="history-actions">
-              <button
-                type="button"
-                disabled={busy || doc.features[0].id === editing.id}
-                onClick={() => onHistoryEdit("up", editing.id)}
-              >
-                Move earlier
-              </button>
-              <button
-                type="button"
-                disabled={busy || doc.features.at(-1)?.id === editing.id}
-                onClick={() => onHistoryEdit("down", editing.id)}
-              >
-                Move later
-              </button>
-              <button
-                type="button"
-                disabled={busy}
-                onClick={() => onHistoryEdit("delete", editing.id)}
-              >
-                Delete feature
-              </button>
-            </div>
-          </>
-        )}
-      </div>
-    </form>
+function historyReplaceHash() {
+  window.history.replaceState(
+    null,
+    "",
+    `${location.pathname}${location.search}#/studio`,
   );
 }

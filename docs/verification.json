@@ -1,66 +1,73 @@
 {
-  "checkpointDate": "2026-10-09",
-  "recordedAt": "2026-10-08T23:16:20.329Z",
-  "scope": "Foundation and limited main workflow only; not full parity acceptance",
-  "artifactSha256": "dcd51d726cbbb31ba8df2bf37cef3b6097fc6d801d02240013d7e50f0b7b75d9",
-  "build": {
-    "command": "npm run build",
-    "passed": true,
-    "basePath": "/notCAD/",
-    "notes": [
-      "Single-threaded local WASM assets bundled",
-      "Vite reports externalized Node-only branches in Emscripten wrappers; all tested browsers load the workers successfully",
-      "Three.js main bundle is larger than Vite default chunk warning threshold"
-    ]
-  },
-  "unitAndKernel": {
-    "command": "npm test",
-    "passed": true,
-    "files": 8,
-    "tests": 46
-  },
-  "browsers": {
-    "command": "DISPLAY=:99 NOTCAD_HEADED=1 LIBGL_ALWAYS_SOFTWARE=1 npm run test:e2e -- --workers=2",
-    "passed": true,
-    "tests": 52,
-    "projects": {
-      "chromium": 13,
-      "firefox": 13,
-      "webkit": 13,
-      "touch": 13
+  "recordedAt": "2026-10-09T12:50:22.853790+00:00",
+  "scope": "Local engineering verification after adding symmetric and two-direction blind extrusion. Not a parity or release attestation.",
+  "sourceRevision": null,
+  "sourceRevisionNote": "The workspace has no Git commits; files are untracked.",
+  "checks": {
+    "unitAndGeometry": {
+      "command": "npm test",
+      "status": "passed",
+      "files": 4,
+      "tests": 29
     },
-    "host": "Linux Mint 22.3, Node.js 22.23.1, Xvfb with software rendering",
-    "touch": "Chromium emulating iPhone 13; no physical-device evidence",
-    "flaky": 0,
-    "skipped": 0,
-    "durationMs": 287097.44
+    "productionBuild": {
+      "command": "npm run build",
+      "status": "passed"
+    },
+    "browserWorkflows": {
+      "command": "PATH=\"/tmp/notcad-xvfb/extracted/usr/bin:$PATH\" npm run test:e2e",
+      "status": "passed",
+      "passed": 22,
+      "skipped": 3,
+      "projects": [
+        "chromium",
+        "firefox",
+        "webkit",
+        "mobile-chromium",
+        "mobile-webkit"
+      ],
+      "skipReason": "Touch-only workflow is skipped in the three desktop profiles.",
+      "notes": [
+        "Tests served the production artifact at /notCAD/.",
+        "Run outside the sandbox after its preview server could not start.",
+        "Mobile profiles are emulation, not physical-device evidence."
+      ],
+      "report": "playwright-report/index.html"
+    },
+    "inventory": {
+      "command": "npm run parity",
+      "status": "passed",
+      "rows": 180,
+      "verified": 0
+    },
+    "releaseGate": {
+      "command": "npm run release:check",
+      "status": "blocked-as-expected",
+      "notes": "Inventory, parity, release evidence and data-loss review remain incomplete."
+    }
   },
-  "dependencyAudit": {
-    "command": "npm audit",
-    "knownVulnerabilities": 0
-  },
-  "parity": {
-    "rows": 134,
-    "complete": 0,
-    "partial": 19,
-    "documentationAuditComplete": false
-  },
-  "release": {
-    "deployed": false,
-    "expectedGateExitCode": 1,
-    "physicalIOS": false,
-    "physicalAndroid": false,
-    "independentSTEPReader": false,
-    "IGESBindings": false
-  },
-  "additionalValidation": {
-    "findings": "docs/VALIDATION.md",
-    "priorCompleteBrowserRuns": [40, 48],
-    "finalCompleteBrowserRun": 52,
-    "invalidatedHostRun": "Xvfb stopped after 28 cases; complete suite rerun with session-owned display and -noreset",
-    "formattingPassed": true,
-    "whitespacePassed": true,
-    "staticAssetSmokePassed": true,
-    "desktopAndEmulatedPhoneVisualReviewPassed": true
+  "artifact": {
+    "root": "dist",
+    "sha256": "07ba291ededed8bde99c87e68052759a932dbee731868a8dcc87e9a32b27652b",
+    "hashMethod": "SHA-256 of UTF-8 lines: <file SHA-256><two spaces><relative POSIX path><LF>, ordered by path.",
+    "files": {
+      "assets/__vite-browser-external-CDzGY3th.js": "57682e499d1494f160ee682ff5536e685ffc82294043ad6b925b6795295fd218",
+      "assets/index-BMJFaCQL.js": "4702cdd817a34cde17654db500db6f2e058457b2103d208326a90fe4a4214ed1",
+      "assets/index-Dt20Wx59.css": "d5e74535343fd071defb3c771735f82868f6c0954ecf5627b122380c9c4cdbbd",
+      "assets/planegcs-DNpN9qS7.wasm": "af9d1874fc895726bd267703a698a86c82d35b7415a02fe5184ebf65ddbc04af",
+      "assets/replicad_single-B_1cTsn_.wasm": "4c9f22e9f3828dca6f3c95405934cdbe624e593c35266f47f392ab337478dbde",
+      "assets/worker-17j_VgAm.js": "62496c94da760c34ed90469e81f21f3dd71e7320bd126ce6cd7e44d783fe8923",
+      "index.html": "cb65002c36bf2e1d68965a8da9270c29f15c0d22758cc29ae20e22d299bcf17b",
+      "licenses/@salusoft89-planegcs.txt": "20c17d8b8c48a600800dfd14f95d5cb9ff47066a9641ddeab48dc54aec96e331",
+      "licenses/THIRD_PARTY_NOTICES.md": "ff1ffa35590d03c29b2c454657515accad33e67fdda622ec74e998ef7eddf148",
+      "licenses/fflate.txt": "0a1df3a083d0c010560aa342e87959c8c1070e6fd54545741f083f22d0c8b551",
+      "licenses/idb.txt": "873a2f333fda393ec3464f4579209b019d98e97c3bf498b10e85f630162fd708",
+      "licenses/react-dom.txt": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93",
+      "licenses/react.txt": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93",
+      "licenses/replicad-opencascadejs.txt": "20c17d8b8c48a600800dfd14f95d5cb9ff47066a9641ddeab48dc54aec96e331",
+      "licenses/replicad.txt": "7a3c098c1cf5d8de05efa0b930e7c8398c221da2a59032b617057fb7f122cf70",
+      "licenses/three.txt": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+      "licenses/zod.txt": "3f1189b28e3866e0d979968d466b78f813f76827cfdca1fbb124cc0a5c8841f8"
+    }
   }
 }

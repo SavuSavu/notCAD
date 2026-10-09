@@ -4,74 +4,71 @@ import {
   type ModuleStatic,
   type SketchPrimitive,
 } from "@salusoft89/planegcs";
-import type { Sketch } from "../model/document";
-import type { Diagnostics } from "./protocol";
-export function profilePrimitives(sketch: Sketch): SketchPrimitive[] {
-  const p = sketch.profile;
-  if (p.kind === "circle")
-    return [
-      { id: "1", type: "point", x: p.x, y: p.y, fixed: true },
-      { id: "2", type: "circle", c_id: "1", radius: p.radius },
-      { id: "3", type: "circle_diameter", c_id: "2", diameter: p.radius * 2 },
-    ];
-  return [
-    { id: "1", type: "point", x: p.x, y: p.y, fixed: true },
-    { id: "2", type: "point", x: p.x + p.width, y: p.y, fixed: false },
-    {
-      id: "3",
-      type: "point",
-      x: p.x + p.width,
-      y: p.y + p.height,
-      fixed: false,
-    },
-    { id: "4", type: "point", x: p.x, y: p.y + p.height, fixed: false },
-    { id: "5", type: "line", p1_id: "1", p2_id: "2" },
-    { id: "6", type: "line", p1_id: "2", p2_id: "3" },
-    { id: "7", type: "line", p1_id: "3", p2_id: "4" },
-    { id: "8", type: "line", p1_id: "4", p2_id: "1" },
-    { id: "9", type: "horizontal_l", l_id: "5" },
-    { id: "10", type: "vertical_l", l_id: "6" },
-    { id: "11", type: "horizontal_l", l_id: "7" },
-    { id: "12", type: "vertical_l", l_id: "8" },
-    {
-      id: "13",
-      type: "p2p_distance",
-      p1_id: "1",
-      p2_id: "2",
-      distance: p.width,
-    },
-    {
-      id: "14",
-      type: "p2p_distance",
-      p1_id: "2",
-      p2_id: "3",
-      distance: p.height,
-    },
-  ];
+import type { SketchFeature } from "../core/model";
+
+export interface SolveReport {
+  status: "satisfied" | "underconstrained" | "redundant" | "inconsistent";
+  dof: number;
+  conflicts: string[];
+  redundant: string[];
+  primitives: SketchPrimitive[];
 }
 export function solvePrimitives(
   module: ModuleStatic,
   primitives: SketchPrimitive[],
-  featureId: string,
-): Diagnostics {
-  const wrapper = new GcsWrapper(new module.GcsSystem(), module);
+): SolveReport {
+  const solver = new GcsWrapper(new module.GcsSystem(), module);
   try {
-    wrapper.push_primitives_and_params(primitives);
-    const status = wrapper.solve();
-    const conflicts = wrapper.get_gcs_conflicting_constraints();
-    const redundant = wrapper.get_gcs_redundant_constraints();
-    if (status === SolveStatus.Success) wrapper.apply_solution();
+    solver.push_primitives_and_params(structuredClone(primitives));
+    const status = solver.solve();
+    const conflicts = solver.get_gcs_conflicting_constraints();
+    const redundant = [
+      ...solver.get_gcs_redundant_constraints(),
+      ...solver.get_gcs_partially_redundant_constraints(),
+    ];
+    const dof = solver.gcs.dof();
+    const failed =
+      status === SolveStatus.Failed ||
+      status === SolveStatus.SuccessfulSolutionInvalid ||
+      conflicts.length > 0;
+    if (!failed) solver.apply_solution();
     return {
-      featureId,
-      status:
-        ["Success", "Converged", "Failed", "SuccessfulSolutionInvalid"][
-          status
-        ] ?? "Failed",
-      dof: wrapper.gcs.dof(),
+      status: failed
+        ? "inconsistent"
+        : redundant.length
+          ? "redundant"
+          : dof > 0
+            ? "underconstrained"
+            : "satisfied",
+      dof,
       conflicts,
       redundant,
+      primitives: structuredClone(solver.sketch_index.get_primitives()),
     };
   } finally {
-    wrapper.destroy_gcs_module();
+    solver.destroy_gcs_module();
   }
+}
+export function profilePrimitives(sketch: SketchFeature): SketchPrimitive[] {
+  const p = sketch.profile;
+  if (p.kind === "circle")
+    return [
+      { id: "1", type: "point", x: sketch.x, y: sketch.y, fixed: true },
+      { id: "2", type: "circle", c_id: "1", radius: p.radius },
+      { id: "3", type: "circle_diameter", c_id: "2", diameter: p.radius * 2 },
+    ];
+  const x = sketch.x - p.width / 2,
+    y = sketch.y - p.height / 2;
+  return [
+    { id: "1", type: "point", x, y, fixed: true },
+    { id: "2", type: "point", x: x + p.width, y, fixed: false },
+    { id: "3", type: "point", x: x + p.width, y: y + p.height, fixed: false },
+    { id: "4", type: "point", x, y: y + p.height, fixed: false },
+    { id: "5", type: "horizontal_pp", p1_id: "1", p2_id: "2" },
+    { id: "6", type: "vertical_pp", p1_id: "2", p2_id: "3" },
+    { id: "7", type: "horizontal_pp", p1_id: "3", p2_id: "4" },
+    { id: "8", type: "vertical_pp", p1_id: "4", p2_id: "1" },
+    { id: "9", type: "coordinate_x", p_id: "2", x: x + p.width },
+    { id: "10", type: "coordinate_y", p_id: "3", y: y + p.height },
+  ];
 }
