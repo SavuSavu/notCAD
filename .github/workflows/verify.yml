@@ -1,10 +1,13 @@
-name: Verify local engineering build
+name: Verify engineering build and publish test preview
 on:
   push:
   pull_request:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: notcad-preview-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   verify:
     runs-on: ubuntu-24.04
@@ -34,4 +37,21 @@ jobs:
           name: notcad-unreleased
           path: dist/
           retention-days: 14
-  # Intentionally no Pages deployment or write token. Release remains blocked.
+      - uses: actions/upload-pages-artifact@v4
+        if: github.ref == 'refs/heads/codex/extrusion-extents' && github.event_name != 'pull_request'
+        with:
+          path: dist/
+  deploy-preview:
+    if: github.ref == 'refs/heads/codex/extrusion-extents' && github.event_name != 'pull_request'
+    needs: verify
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment
+  # User-authorized test preview; full parity release gates remain incomplete.

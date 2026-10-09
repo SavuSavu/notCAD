@@ -13,7 +13,7 @@ The workspace started empty. This session established the application, exact-geo
 - Incremental history-prefix reuse; transactionally committed regeneration; previews with independent ownership; edits, dependency-aware reordering, suppression, rollback, undo/redo and worker restart. Body/sketch IDs are stable; persistent face/edge provenance and repair are pending.
 - Validated version-1 `.notcad` ZIP project files. Transactional IndexedDB autosave with ten recovery snapshots, visible errors and competing-tab protection. Committed projects can always be downloaded while geometry or storage is failing.
 - STEP and binary STL export. STEP import exists as a worker-level inspection/round-trip primitive, not a user-facing imported-feature workflow. STL export has a separate binary parser/volume oracle in tests.
-- Initial 180-row capability matrix, fixture specifications, build license notices, artifact-only CI, and a release gate that fails while work remains. No Pages deployment exists.
+- Initial 180-row capability matrix, fixture specifications, build license notices, verified-artifact CI, and a release gate that fails while work remains. The user authorized a Pages test preview from `codex/extrusion-extents` on October 9, 2026; this is separate from a full-parity release.
 
 ## Continue from here
 
@@ -24,7 +24,7 @@ The workspace started empty. This session established the application, exact-geo
 5. Complete milestone 3: remaining solid/surface/curve tools, variables/configurations, sheet metal, frames, routing and local libraries. Acceptance fixture specifications already exist; their runnable workflows mostly do not.
 6. Complete milestone 4: assemblies with a separate rigid-body solver, every required mate/relationship, motion, in-context references, exploded views, BOMs and associative drawings/exports. There are no placeholder assembly or drawing controls.
 7. Complete cross-browser coverage of every parity row and all seven UI workflows. Record physical iOS Safari/Android Chrome evidence with exact artifact digests; browser profiles do not satisfy that gate.
-8. Only after the complete contract passes, implement the requested GitHub Pages publication, exact-artifact smoke tests and retained-artifact rollback.
+8. Complete full-release acceptance, exact-artifact smoke tests and retained-artifact rollback. The user separately authorized publishing the current incomplete build as a test preview.
 
 ## Verification and local operation
 
@@ -34,4 +34,4 @@ Latest continuation: symmetric and two-direction blind extrusion is implemented 
 
 On Linux, the browser runner uses Firefox's display backend because its headless backend did not provide WebGL in this environment. It automatically wraps the run in `xvfb-run` when `DISPLAY` is absent. Install browser dependencies with `npx playwright install --with-deps chromium firefox webkit`. In this session Xvfb was extracted without root to `/tmp/notcad-xvfb/extracted`, so local commands used `PATH="/tmp/notcad-xvfb/extracted/usr/bin:$PATH" npm run test:e2e`. This temporary path is not a project dependency. CI installs Xvfb through Playwright's supported Ubuntu dependency setup. See [Playwright CI guidance](https://playwright.dev/docs/ci).
 
-Known limits: one Part Studio per document; 200 history features; 16 MiB project archives; dimensions 0.001–100,000 mm; fixed-position rectangle/circle sketches; global-axis revolve; all-edge finishing; no imported-asset persistence, mesh-reference UI, assembly, drawings, version browser or unsupported format handling beyond explicit rejection. These limitations keep the corresponding parity rows incomplete. No physical devices or GitHub deployment were accessed.
+Known limits: one Part Studio per document; 200 history features; 16 MiB project archives; dimensions 0.001–100,000 mm; fixed-position rectangle/circle sketches; global-axis revolve; all-edge finishing; no imported-asset persistence, mesh-reference UI, assembly, drawings, version browser or unsupported format handling beyond explicit rejection. These limitations keep the corresponding parity rows incomplete. No physical devices were accessed.
